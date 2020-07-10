@@ -1,11 +1,18 @@
-# IFORUM
+# iForum
 
-ImpressCMS bulletin Board, for ImpressCMS >= 1.2
+ImpressCMS bulletin Board
+## 2.2
+### New
+* Now requires ImpressCMS 1.4+
 
+### Improvement
+
+### Bugfix
 
 ## 2.0
 released on 29 November 2017
 ### New 
+* Now requires ImpressCMS 1.3.6+
 * Lightbox for images within the postings added (sato-san)
 * Japanese translation files (sato-san)
 
