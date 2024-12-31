@@ -243,15 +243,15 @@ switch($action)
 			$key_c = -1 * $c;
 			$form->addItem($key_c, "<strong>[".$categories[$c]->getVar('cat_title')."]</strong>");
 			if($forums[$c]) {
-            foreach(array_keys($forums[$c]) as $f)
-			{
-				$form->addItem($f, $forums[$c][$f]["title"], $key_c);
-				if (!isset($forums[$c][$f]["sub"])) continue;
-				foreach(array_keys($forums[$c][$f]["sub"]) as $s)
-				{
-					$form->addItem($s, "&rarr;".$forums[$c][$f]["sub"][$s]["title"], $f);
-				}
-			}
+                foreach(array_keys($forums[$c]) as $f)
+                {
+                    $form->addItem($f, $forums[$c][$f]["title"], $key_c);
+                    if (!isset($forums[$c][$f]["sub"])) continue;
+                    foreach(array_keys($forums[$c][$f]["sub"]) as $s)
+                    {
+                        $form->addItem($s, "&rarr;".$forums[$c][$f]["sub"][$s]["title"], $f);
+                    }
+                }
             }
 		}
 		unset($forums, $categories);
