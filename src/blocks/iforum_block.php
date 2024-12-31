@@ -48,7 +48,7 @@ function b_iforum_show($options)
 {
 	global $icmsConfig;
 	global $access_forums;
-	$modulename = basename(dirname(dirname(__FILE__ ) ) );
+	$modulename = basename(dirname(__FILE__, 2));
 	$db =icms_db_Factory::instance();
 	$myts = icms_core_Textsanitizer::getInstance();
 	$block = array();
@@ -73,7 +73,7 @@ function b_iforum_show($options)
 
 	if (!isset($access_forums))
 	{
-		$forum_handler = icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
+		$forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 2)), 'iforum' );
 		if (!$access_obj = $forum_handler->getForums(0, 'access', array('forum_id', 'cat_id', 'forum_type')) )
 		{
 			return null;
@@ -323,7 +323,7 @@ function b_iforum_post_show($options)
 {
 	global $icmsConfig;
 	global $access_forums;
-	$modulename = basename(dirname(dirname(__FILE__ ) ) );
+	$modulename = basename(dirname(__FILE__, 2));
 	$db =Database::getInstance();
 	$myts =icms_core_Textsanitizer::getInstance();
 	$block = array();
