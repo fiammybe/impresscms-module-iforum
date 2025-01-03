@@ -36,7 +36,7 @@ if (isset($_POST['default'])) $op = 'default';
 if (isset($_GET['forum'])) $forum = $_GET['forum'];
 if (isset($_POST['forum'])) $forum = $_POST['forum'];
 
-$forum_handler = icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
+$forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 2)), 'iforum' );
 /**
 * newForum()
 *
@@ -55,7 +55,7 @@ function newForum($parent_forum = 0)
 * @return
 */
 function editForum($ff, $parent_forum = 0) {
-	global $myts, $forum_handler;
+	global $forum_handler;
 
 	if (!is_object($ff)) {
 		$ff = $forum_handler->create();
@@ -141,10 +141,6 @@ function editForum($ff, $parent_forum = 0) {
 	$hotTopicThresholdInput = new icms_form_elements_Text(_AM_IFORUM_HOTTOPICTHRESHOLD, 'hot_threshold', 5, 10, $ff->getVar('hot_threshold'));
 	$sform->addElement($hotTopicThresholdInput, true);
 
-	/*
-	$allowattach_radio = new icms_form_elements_Radioyn(_AM_IFORUM_ALLOW_ATTACHMENTS, 'allow_attachments', $ff->getVar('allow_attachments'), '' . _YES . '', ' ' . _NO . '');
-	$sform->addElement($allowattach_radio);
-	*/
 	$attachmentSizeInput = new icms_form_elements_Text(_AM_IFORUM_ATTACHMENT_SIZE, 'attach_maxkb', 5, 10, $ff->getVar('attach_maxkb'));
 	$sform->addElement($attachmentSizeInput, true);
 	//$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_ALLOWED_EXTENSIONS, 'attach_ext', 50, 255, $ff->getVar('attach_ext')), true);
