@@ -26,7 +26,7 @@
 include("admin_header.php");
  
 icms_cp_header();
-loadModuleAdminMenu(7, _AM_IFORUM_PRUNE_TITLE);
+icms::$module->displayAdminMenu(7, _AM_IFORUM_PRUNE_TITLE);
 echo "<fieldset style='border: #e8e8e8 1px solid;'>
 	<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_PRUNE_TITLE . "</legend>";
 echo"<br /><br /><table width='100%' border='0' cellspacing='1' class='outer'>" . "<tr><td class='odd'>";

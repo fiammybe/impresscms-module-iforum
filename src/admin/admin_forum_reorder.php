@@ -59,7 +59,7 @@ else
 	$cat = array();
 	 
 	icms_cp_header();
-	loadModuleAdminMenu(6, _AM_IFORUM_SETFORUMORDER);
+	icms::$module->displayAdminMenu(6, _AM_IFORUM_SETFORUMORDER);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_SETFORUMORDER . "</legend>";
 	echo"<br /><br /><table width='100%' border='0' cellspacing='1' class='outer'>" . "<tr><td class='odd'>";

@@ -25,7 +25,7 @@
 
 include 'admin_header.php';
 include ICMS_ROOT_PATH . "/class/xoopstree.php";
-
+//include_once ICMS_ROOT_PATH . "/class/pagenav.php";
 
 $op = '';
 $confirm = '';
@@ -69,7 +69,7 @@ function editForum($ff, $parent_forum = 0) {
 		$pf = $forum_handler->get($parent_forum);
 	}
 
-	$mytree = new XoopsTree(icms::$xoopsDB->prefix("bb_categories"), "cat_id", "0");
+	$mytree = new icms_view_Tree(icms::$xoopsDB->prefix("bb_categories"), "cat_id", "0");
 
 	if ($forum) {
 		$sform = new icms_form_Theme(_AM_IFORUM_EDITTHISFORUM . " " . $ff->getVar('forum_name'), "op", xoops_getenv('PHP_SELF'));
@@ -92,10 +92,13 @@ function editForum($ff, $parent_forum = 0) {
 		$ff->setVar('attach_ext', 'zip|gif|jpg');
 	}
 
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_FORUMNAME, 'forum_name', 50, 80, $ff->getVar('forum_name', 'E')), true);
-	$sform->addElement(new icms_form_elements_Dhtmltextarea(_AM_IFORUM_FORUMDESCRIPTION, 'forum_desc', $ff->getVar('forum_desc', 'E'), 10, 60), false);
+	$forumNameInput = new icms_form_elements_Text(_AM_IFORUM_FORUMNAME, 'forum_name', 50, 80, $ff->getVar('forum_name', 'E'));
+	$sform->addElement($forumNameInput, true);
+	$forumDescriptionTextarea = new icms_form_elements_Dhtmltextarea(_AM_IFORUM_FORUMDESCRIPTION, 'forum_desc', $ff->getVar('forum_desc', 'E'), 10, 60);
+	$sform->addElement($forumDescriptionTextarea, false);
 
-	$sform->addElement(new icms_form_elements_Hidden('parent_forum', $ff->getVar('parent_forum')));
+	$icms_form_elements_Hidden = new icms_form_elements_Hidden('parent_forum', $ff->getVar('parent_forum'));
+	$sform->addElement($icms_form_elements_Hidden);
 	if ($parent_forum == 0)
 	{
 		ob_start();
@@ -107,15 +110,18 @@ function editForum($ff, $parent_forum = 0) {
 		{
 			$mytree->makeMySelBox("cat_title", "cat_id", $ff->getVar('cat_id'));
 		}
-		$sform->addElement(new icms_form_elements_Label(_AM_IFORUM_CATEGORY, ob_get_contents()));
+		$categorySelectBox = new icms_form_elements_Label(_AM_IFORUM_CATEGORY, ob_get_contents());
+		$sform->addElement($categorySelectBox);
 		ob_end_clean();
 	}
 	else
 	{
-		$sform->addElement(new icms_form_elements_Hidden('cat_id', $pf->getVar('cat_id')));
+		$icms_form_elements_Hidden1 = new icms_form_elements_Hidden('cat_id', $pf->getVar('cat_id'));
+		$sform->addElement($icms_form_elements_Hidden1);
 	}
 
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_SET_FORUMORDER, 'forum_order', 5, 10, $ff->getVar('forum_order')), false);
+	$forumOrderInput = new icms_form_elements_Text(_AM_IFORUM_SET_FORUMORDER, 'forum_order', 5, 10, $ff->getVar('forum_order'));
+	$sform->addElement($forumOrderInput, false);
 	$status_select = new icms_form_elements_Select(_AM_IFORUM_STATE, "forum_type", $ff->getVar('forum_type'));
 	$status_select->addOptionArray(array('0' => _AM_IFORUM_ACTIVE, '1' => _AM_IFORUM_INACTIVE));
 	$sform->addElement($status_select);
@@ -132,32 +138,41 @@ function editForum($ff, $parent_forum = 0) {
 	$allowprefix_radio = new icms_form_elements_Radioyn(_AM_IFORUM_ALLOW_SUBJECT_PREFIX, 'allow_subject_prefix', $ff->getVar('allow_subject_prefix'), '' . _YES . '', ' ' . _NO . '');
 	$sform->addElement($allowprefix_radio);
 
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_HOTTOPICTHRESHOLD, 'hot_threshold', 5, 10, $ff->getVar('hot_threshold')), true);
+	$hotTopicThresholdInput = new icms_form_elements_Text(_AM_IFORUM_HOTTOPICTHRESHOLD, 'hot_threshold', 5, 10, $ff->getVar('hot_threshold'));
+	$sform->addElement($hotTopicThresholdInput, true);
 
 	/*
 	$allowattach_radio = new icms_form_elements_Radioyn(_AM_IFORUM_ALLOW_ATTACHMENTS, 'allow_attachments', $ff->getVar('allow_attachments'), '' . _YES . '', ' ' . _NO . '');
 	$sform->addElement($allowattach_radio);
 	*/
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_ATTACHMENT_SIZE, 'attach_maxkb', 5, 10, $ff->getVar('attach_maxkb')), true);
+	$attachmentSizeInput = new icms_form_elements_Text(_AM_IFORUM_ATTACHMENT_SIZE, 'attach_maxkb', 5, 10, $ff->getVar('attach_maxkb'));
+	$sform->addElement($attachmentSizeInput, true);
 	//$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_ALLOWED_EXTENSIONS, 'attach_ext', 50, 255, $ff->getVar('attach_ext')), true);
 	$ext = $ff->getVar('attach_ext');
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_ALLOWED_EXTENSIONS, 'attach_ext', 50, 255, $ext), true);
-	$sform->addElement(new icms_form_elements_select_User(_AM_IFORUM_MODERATOR, 'forum_moderator', false, $ff->getVar("forum_moderator"), 5, true));
+	$attachmentExtensionsInput = new icms_form_elements_Text(_AM_IFORUM_ALLOWED_EXTENSIONS, 'attach_ext', 50, 255, $ext);
+	$sform->addElement($attachmentExtensionsInput, true);
+	$moderatorSelection = new icms_form_elements_select_User(_AM_IFORUM_MODERATOR, 'forum_moderator', false, $ff->getVar("forum_moderator"), 5, true);
+	$sform->addElement($moderatorSelection);
 
 	$perm_tray = new icms_form_elements_Tray(_AM_IFORUM_PERMISSIONS_TO_THIS_FORUM, '');
 	$perm_checkbox = new icms_form_elements_Checkbox('', 'perm_template', $ff->isNew());
 	$perm_checkbox->addOption(1, _AM_IFORUM_PERM_TEMPLATEAPP);
 	$perm_tray->addElement($perm_checkbox);
-	$perm_tray->addElement(new icms_form_elements_Label('', '<a href="admin_permissions.php?action=template" target="_blank">'._AM_IFORUM_PERM_TEMPLATE.'</a>'));
+	$permissionInfoLink = new icms_form_elements_Label('', '<a href="admin_permissions.php?action=template" target="_blank">' . _AM_IFORUM_PERM_TEMPLATE . '</a>');
+	$perm_tray->addElement($permissionInfoLink);
 	$sform->addElement($perm_tray);
 
-	$sform->addElement(new icms_form_elements_Hidden('forum', $forum));
-	$sform->addElement(new icms_form_elements_Hidden('op', "save"));
+	$icms_form_elements_Hidden2 = new icms_form_elements_Hidden('forum', $forum);
+	$sform->addElement($icms_form_elements_Hidden2);
+	$icms_form_elements_Hidden3 = new icms_form_elements_Hidden('op', "save");
+	$sform->addElement($icms_form_elements_Hidden3);
 
 	$button_tray = new icms_form_elements_Tray('', '');
-	$button_tray->addElement(new icms_form_elements_Button('', '', _SUBMIT, 'submit'));
+	$submitButton = new icms_form_elements_Button('', '', _SUBMIT, 'submit');
+	$button_tray->addElement($submitButton);
 
-	$button_tray->addElement(new icms_form_elements_Button('', '', _AM_IFORUM_CLEAR, 'reset'));
+	$cancelButton = new icms_form_elements_Button('', '', _AM_IFORUM_CLEAR, 'reset');
+	$button_tray->addElement($cancelButton);
 
 	$butt_cancel = new icms_form_elements_Button('', '', _CANCEL, 'button');
 	$butt_cancel->setExtra('onclick="history.go(-1)"');
@@ -170,7 +185,7 @@ icms_cp_header();
 switch ($op)
 {
 	case 'moveforum':
-	loadModuleAdminMenu(2, "");
+	icms::$module->displayAdminMenu(2, "");
 
 	if (!empty($_POST['dest']))
 	{
@@ -213,7 +228,7 @@ switch ($op)
 	}
 	else
 	{
-		//loadModuleAdminMenu(2, "");
+		//icms::$module->displayAdminMenu(2, "");
 
 		if (!empty($_POST['forum'])) $forum_id = (int)$_POST['forum'];
 			if (!empty($_GET['forum'])) $forum_id = (int)$_GET['forum'];
@@ -253,7 +268,7 @@ switch ($op)
 	break;
 
 	case 'mergeforum':
-	loadModuleAdminMenu(2, "");
+	icms::$module->displayAdminMenu(2, "");
 
 	if (!empty($_POST['dest_forum']))
 	{
@@ -289,7 +304,7 @@ switch ($op)
 	}
 	else
 	{
-		//loadModuleAdminMenu(2, "");
+		//icms::$module->displayAdminMenu(2, "");
 
 		if (isset($_GET['forum'])) $forum_id = (int)$_GET['forum'];
 			if (isset($_POST['forum'])) $forum_id = (int)$_POST['forum'];
@@ -332,7 +347,7 @@ switch ($op)
 	break;
 
 	case 'sync':
-	loadModuleAdminMenu(5, _AM_IFORUM_SYNCFORUM);
+	icms::$module->displayAdminMenu(5, _AM_IFORUM_SYNCFORUM);
 	if (isset($_POST['submit']))
 	{
 		iforum_synchronization();
@@ -345,7 +360,7 @@ switch ($op)
 	}
 	else
 	{
-		//loadModuleAdminMenu(3, _AM_IFORUM_SYNCFORUM);
+		//icms::$module->displayAdminMenu(3, _AM_IFORUM_SYNCFORUM);
 		echo '<fieldset style="border: #e8e8e8 1px solid;">
 			<legend style="display: inline; font-weight: bold; color: #900;">' . _AM_IFORUM_SYNCFORUM . '</legend>';
 		echo '<br /><br /><table width="100%" border="0" cellspacing="1" class="outer"><tr><td class="odd">';
@@ -432,7 +447,7 @@ switch ($op)
 
 	case "mod":
 	$ff = $forum_handler->get($forum);
-	loadModuleAdminMenu(2, _AM_IFORUM_EDITTHISFORUM . $ff->getVar('forum_name'));
+	icms::$module->displayAdminMenu(2, _AM_IFORUM_EDITTHISFORUM . $ff->getVar('forum_name'));
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_EDITTHISFORUM . "</legend>";
 	echo"<br /><br /><table width='100%' border='0' cellspacing='1' class='outer'><tr><td class='odd'>";
@@ -447,7 +462,7 @@ switch ($op)
 
 	if (isset($_POST['confirm']) != 1)
 	{
-		xoops_confirm(array('op' => 'del', 'forum' => (int)$_GET['forum'], 'confirm' => 1), 'admin_forum_manager.php', _AM_IFORUM_TWDAFAP);
+		icms_core_Message::confirm(array('op' => 'del', 'forum' => (int)$_GET['forum'], 'confirm' => 1), 'admin_forum_manager.php', _AM_IFORUM_TWDAFAP);
 		break;
 	}
 	else
@@ -460,7 +475,7 @@ switch ($op)
 	break;
 
 	case 'manage':
-	loadModuleAdminMenu(2, _AM_IFORUM_FORUM_MANAGER);
+	icms::$module->displayAdminMenu(2, _AM_IFORUM_FORUM_MANAGER);
 
 	$echo = "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_FORUM_MANAGER . "</legend>";
@@ -476,7 +491,7 @@ switch ($op)
 	$echo .= "<td class='bg3'>" . _AM_IFORUM_MERGE . "</td>";
 	$echo .= "</tr>";
 
-	$category_handler =icms_getmodulehandler('category', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
+	$category_handler =icms_getmodulehandler('category', basename(dirname(__FILE__, 2)), 'iforum' );
 	$categories = $category_handler->getAllCats('', true);
 	$forums = $forum_handler->getForumsByCategory(array_keys($categories), '', false);
 	foreach (array_keys($categories) as $c)
@@ -542,7 +557,7 @@ switch ($op)
 
 	case "addsubforum":
 	/*
-	loadModuleAdminMenu(2, _AM_IFORUM_CREATENEWFORUM);
+	icms::$module->displayAdminMenu(2, _AM_IFORUM_CREATENEWFORUM);
 	echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . _AM_IFORUM_CREATENEWFORUM . "</legend>";
 	echo "<br />";
 	$parent_forum = isset($_GET['parent_forum']) ? (int)$_GET['parent_forum'] : null;
@@ -556,7 +571,7 @@ switch ($op)
 
 	case "default":
 	default:
-	loadModuleAdminMenu(2, _AM_IFORUM_CREATENEWFORUM);
+	icms::$module->displayAdminMenu(2, _AM_IFORUM_CREATENEWFORUM);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_CREATENEWFORUM . "</legend>";
 	echo "<br />";
@@ -568,5 +583,3 @@ switch ($op)
 	break;
 }
 icms_cp_footer();
-
-?>

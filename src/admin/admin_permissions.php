@@ -37,12 +37,14 @@ include 'admin_header.php';
 
 icms_cp_header();
 
-loadModuleAdminMenu(3, _AM_IFORUM_PERM_PERMISSIONS );
+icms::$module->displayAdminMenu(3, _AM_IFORUM_PERM_PERMISSIONS );
 
 $action = isset($_REQUEST['action']) ? strtolower($_REQUEST['action']) : "";
 $module_id = icms::$module->getVar('mid');
 $perms = array_map("trim", explode(',', FORUM_PERM_ITEMS));
 
+$icms_form_elements_Button = new icms_form_elements_Button('', 'submit', _SUBMIT, 'submit');
+$icms_form_elements_Button1 = new icms_form_elements_Button('', 'reset', _CANCEL, 'reset');
 switch($action)
 {
 	case "template":
@@ -91,9 +93,10 @@ switch($action)
 		$elements[] = $ret_ele;
 	}
 	$tray = new icms_form_elements_Tray('');
-	$tray->addElement(new icms_form_elements_Hidden('action', 'template_save'));
-	$tray->addElement(new icms_form_elements_Button('', 'submit', _SUBMIT, 'submit'));
-	$tray->addElement(new icms_form_elements_Button('', 'reset', _CANCEL, 'reset'));
+		$icms_form_elements_Hidden1 = new icms_form_elements_Hidden('action', 'template_save');
+		$tray->addElement($icms_form_elements_Hidden1);
+	$tray->addElement($icms_form_elements_Button);
+	$tray->addElement($icms_form_elements_Button1);
 	$ret = '<h4>' . _AM_IFORUM_PERM_TEMPLATE . '</h4>' . _AM_IFORUM_PERM_TEMPLATE_DESC . '<br /><br /><br />';
 	$ret .= "<form name='template' id='template' method='post'>\n<table width='100%' class='outer' cellspacing='1'>\n";
 	$ret .= implode("\n", $elements);
@@ -138,6 +141,7 @@ switch($action)
 	$forum_handler =icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 	$forums = $forum_handler->getForumsByCategory(0, '', false);
 	$fm_options = array();
+	if ($categories > 0){
 	foreach (array_keys($categories) as $c)
 	{
 		$fm_options[-1 * $c] = "[".$categories[$c]->getVar('cat_title')."]";
@@ -152,14 +156,16 @@ switch($action)
 		}
 	}
 	unset($forums, $categories);
+	}
 	$fmform = new icms_form_Theme(_AM_IFORUM_PERM_TEMPLATEAPP, 'fmform', 'admin_permissions.php', "post");
 	$fm_select = new icms_form_elements_Select(_AM_IFORUM_PERM_FORUMS, 'forums', null, 10, true);
 	$fm_select->addOptionArray($fm_options);
 	$fmform->addElement($fm_select);
 	$tray = new icms_form_elements_Tray('');
-	$tray->addElement(new icms_form_elements_Hidden('action', 'apply_save'));
-	$tray->addElement(new icms_form_elements_Button('', 'submit', _SUBMIT, 'submit'));
-	$tray->addElement(new icms_form_elements_Button('', 'reset', _CANCEL, 'reset'));
+		$icms_form_elements_Hidden = new icms_form_elements_Hidden('action', 'apply_save');
+		$tray->addElement($icms_form_elements_Hidden);
+	$tray->addElement($icms_form_elements_Button);
+	$tray->addElement($icms_form_elements_Button1);
 	$fmform->addElement($tray);
 	$fmform->display();
 	break;
@@ -226,7 +232,7 @@ switch($action)
 
 	$form = new icms_form_Groupperm($fm_options[$op]["title"], $module_id, $fm_options[$op]["item"], $fm_options[$op]["desc"], 'admin/admin_permissions.php', $fm_options[$op]["anonymous"]);
 
-	$category_handler = icms_getmodulehandler('category', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
+	$category_handler = icms_getmodulehandler('category', basename(dirname(__FILE__, 2)), 'iforum' );
 	$categories = $category_handler->getAllCats("", true);
 	if ($op == "category")
 	{

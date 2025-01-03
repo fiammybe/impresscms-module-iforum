@@ -80,7 +80,7 @@ switch($op)
 	}
 
 	$limit = 10;
-	loadModuleAdminMenu(8, _AM_IFORUM_REPORTADMIN);
+	icms::$module->displayAdminMenu(8, _AM_IFORUM_REPORTADMIN);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_REPORTADMIN . "</legend>";
 	echo"<br />";

@@ -145,7 +145,7 @@ switch ($op)
 
 	icms_cp_header();
 
-	loadModuleAdminMenu(0, "Index");
+	icms::$module->displayAdminMenu(0, "Index");
 	$imageLibs = iforum_getImageLibs();
 
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
