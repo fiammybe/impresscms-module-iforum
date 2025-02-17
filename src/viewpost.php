@@ -95,8 +95,8 @@ switch($type)
 	$criteria_type_post = new icms_db_criteria_Item("p.approved", -1);
 	break;
 	case "new":
-	$criteria_type_count = new icms_db_criteria_Compo(new icms_db_criteria_Item("post_time", intval($last_visit), ">"));
-	$criteria_type_post = new icms_db_criteria_Compo(new icms_db_criteria_Item("p.post_time", intval($last_visit), ">"));
+	$criteria_type_count = new icms_db_criteria_Compo(new icms_db_criteria_Item("post_time", (int)$last_visit, ">"));
+	$criteria_type_post = new icms_db_criteria_Compo(new icms_db_criteria_Item("p.post_time", (int)$last_visit, ">"));
 	$criteria_type_count->add(new icms_db_criteria_Item("approved", 1));
 	$criteria_type_post->add(new icms_db_criteria_Item("p.approved", 1));
 	// following is for "unread" -- not finished

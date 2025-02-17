@@ -25,7 +25,7 @@
 
 include 'header.php';
 
-$forum_id = isset($_POST['forum_id']) ? intval($_POST['forum_id']) :
+$forum_id = isset($_POST['forum_id']) ? (int)$_POST['forum_id'] :
  0;
 $topic_id = !empty($_POST['topic_id']) ? $_POST['topic_id'] :
  null;
@@ -150,8 +150,8 @@ switch($op)
 	{
 		$criteria = new icms_db_criteria_Item('topic_id', "(".implode(",", $topic_id).")", "IN");
 		$post_handler = icms_getmodulehandler('post', basename(__DIR__), 'iforum' );
-		$post_handler->updateAll("forum_id", intval($_POST["newforum"]), $criteria, true);
-		$topic_handler->updateAll("forum_id", intval($_POST["newforum"]), $criteria, true);
+		$post_handler->updateAll("forum_id", (int)$_POST["newforum"], $criteria, true);
+		$topic_handler->updateAll("forum_id", (int)$_POST["newforum"], $criteria, true);
 
 		$forum_handler->synchronization($_POST["newforum"]);
 		$forum_handler->synchronization($forum_id);

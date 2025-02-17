@@ -22,16 +22,16 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 include_once("header.php");
- 
+
 include ICMS_ROOT_PATH."/modules/xoopspoll/include/constants.php";
 include_once ICMS_ROOT_PATH."/class/xoopsblock.php";
 include_once ICMS_ROOT_PATH."/modules/xoopspoll/class/xoopspoll.php";
 include_once ICMS_ROOT_PATH."/modules/xoopspoll/class/xoopspolloption.php";
 include_once ICMS_ROOT_PATH."/modules/xoopspoll/class/xoopspolllog.php";
 include_once ICMS_ROOT_PATH."/modules/xoopspoll/class/xoopspollrenderer.php";
- 
+
 $op = "add";
 if (isset($_GET['op'])) $op = $_GET['op'];
 if (isset($_POST['op'])) $op = $_POST['op'];
@@ -39,7 +39,7 @@ if (isset($_GET['poll_id'])) $poll_id = (int)$_GET['poll_id'];
 	if (isset($_POST['poll_id'])) $poll_id = (int)$_POST['poll_id'];
 	if (isset($_GET['topic_id'])) $topic_id = (int)$_GET['topic_id'];
 	if (isset($_POST['topic_id'])) $topic_id = (int)$_POST['topic_id'];
-	 
+
 if (!isset($module_handler)) $module_handler = icms::handler('icms_module');
 $xoopspoll = $module_handler->getByDirname('xoopspoll');
 if (!is_object($xoopspoll) || !$xoopspoll->getVar('isactive'))
@@ -47,9 +47,9 @@ if (!is_object($xoopspoll) || !$xoopspoll->getVar('isactive'))
 	redirect_header("javascript:history.go(-1);", 2, _MD_POLLMODULE_ERROR);
 	exit();
 }
- 
+
 include ICMS_ROOT_PATH."/header.php";
- 
+
 $topic_handler = icms_getmodulehandler('topic', basename(__DIR__), 'iforum' );
 $forumtopic = $topic_handler->get($topic_id);
 $forum = $forumtopic->getVar('forum_id');
@@ -65,7 +65,7 @@ if (!$topic_handler->getPermission($viewtopic_forum, $forumtopic->getVar('topic_
 	redirect_header("viewforum.php?forum=".$viewtopic_forum->getVar('forum_id'), 2, _MD_NORIGHTTOVIEW);
 	exit();
 }
- 
+
 $isadmin = iforum_isAdmin($viewtopic_forum);
 $perm = false;
 if ($isadmin)
@@ -90,31 +90,31 @@ if (!$perm)
 {
 	redirect_header("viewtopic.php?topic_id=".$topic_id, 2, _MD_NORIGHTTOACCESS);
 }
- 
+
 if ($op == "add" )
 {
 	$poll_form = new icms_form_Theme(_MD_POLL_CREATNEWPOLL, "poll_form", "polls.php");
-	 
+
 	$question_text = new icms_form_elements_Text(_MD_POLL_POLLQUESTION, "question", 50, 255);
 	$poll_form->addElement($question_text, true);
-	 
+
 	$desc_tarea = new icms_form_elements_Textarea(_MD_POLL_POLLDESC, "description");
 	$poll_form->addElement($desc_tarea);
-	 
+
 	$currenttime = formatTimestamp(time(), "Y-m-d H:i:s");
 	$endtime = formatTimestamp(time()+604800, "Y-m-d H:i:s");
 	$expire_text = new icms_form_elements_Text(_MD_POLL_EXPIRATION."<br /><small>"._MD_POLL_FORMAT."<br />".sprintf(_MD_POLL_CURRENTTIME, $currenttime)."</small>", "end_time", 30, 19, $endtime);
 	$poll_form->addElement($expire_text);
-	 
+
 	$weight_text = new icms_form_elements_Text(_MD_POLL_DISPLAYORDER, "weight", 6, 5, 0);
 	$poll_form->addElement($weight_text);
-	 
+
 	$multi_yn = new icms_form_elements_Radioyn(_MD_POLL_ALLOWMULTI, "multiple", 0);
 	$poll_form->addElement($multi_yn);
-	 
+
 	$notify_yn = new icms_form_elements_Radioyn(_MD_POLL_NOTIFY, "notify", 1);
 	$poll_form->addElement($notify_yn);
-	 
+
 	$option_tray = new icms_form_elements_Tray(_MD_POLL_POLLOPTIONS, "");
 	$barcolor_array = icms_core_Filesystem::getFileList(ICMS_ROOT_PATH."/modules/xoopspoll/images/colorbars/", "", array('gif', 'jpg', 'png'));
 	for($i = 0; $i < 10; $i++)
@@ -136,7 +136,7 @@ if ($op == "add" )
 		unset($color_select, $color_label);
 	}
 	$poll_form->addElement($option_tray);
-	 
+
 	$submit_button = new icms_form_elements_Button("", "poll_submit", _SUBMIT, "submit");
 	$poll_form->addElement($submit_button);
 	$op_hidden = new icms_form_elements_Hidden("op", "save");
@@ -149,7 +149,7 @@ if ($op == "add" )
 	//include ICMS_ROOT_PATH."/footer.php";
 	//exit();
 }
- 
+
 if ($op == "save" )
 {
 	/*
@@ -170,7 +170,7 @@ if ($op == "save" )
 		}
 	}
 	if ($option_empty) redirect_header("javascript:history.go(-1);", 2, _MD_ERROROCCURED.': '._MD_POLL_POLLOPTIONS.' !');
-	 
+
 	$poll = new XoopsPoll();
 	//$question = (empty($_POST['question']))?"":$_POST['question'];
 	$poll->setVar("question", @$_POST['question']);
@@ -189,9 +189,9 @@ if ($op == "save" )
 	}
 	$poll->setVar("display", 0);
 	//$weight = (empty($_POST['weight']))?"":$_POST['weight'];
-	$poll->setVar("weight", intval(@$_POST['weight']));
+	$poll->setVar("weight", (int)@$_POST['weight']);
 	//$weight = (empty($_POST['multiple']))?"":$_POST['multiple'];
-	$poll->setVar("multiple", intval(@$_POST['multiple']));
+	$poll->setVar("multiple", (int)@$_POST['multiple']);
 	if (!empty($_POST["notify"]) )
 	{
 		// if notify, set mail status to "not mailed"
@@ -240,7 +240,7 @@ if ($op == "save" )
 	redirect_header("viewtopic.php?topic_id=$topic_id", 1, _MD_POLL_DBUPDATED);
 	//exit();
 }
- 
+
 if ($op == "edit" )
 {
 	$poll = new XoopsPoll($_GET['poll_id']);
@@ -309,7 +309,7 @@ if ($op == "edit" )
 	//include ICMS_ROOT_PATH."/footer.php";
 	//exit();
 }
- 
+
 if ($op == "update" )
 {
 	$option_empty = true;
@@ -327,7 +327,7 @@ if ($op == "update" )
 		}
 	}
 	if ($option_empty) redirect_header("javascript:history.go(-1);", 2, _MD_ERROROCCURED.': '._MD_POLL_POLLOPTIONS.' !');
-	 
+
 	$poll = new XoopsPoll($poll_id);
 	//$question = (empty($_POST['question']))?"":$_POST['question'];
 	$poll->setVar("question", @$_POST['question']);
@@ -343,9 +343,9 @@ if ($op == "update" )
 	}
 	$poll->setVar("display", 0);
 	//$weight = (empty($_POST['weight']))?"":$_POST['weight'];
-	$poll->setVar("weight", intval(@$_POST['weight']));
+	$poll->setVar("weight", (int)@$_POST['weight']);
 	//$multiple = (empty($_POST['multiple']))?"":$_POST['multiple'];
-	$poll->setVar("multiple", intval(@$_POST['multiple']));
+	$poll->setVar("multiple", (int)@$_POST['multiple']);
 	if (!empty($_POST["notify"]) && $end_time > time() )
 	{
 		// if notify, set mail status to "not mailed"
@@ -391,7 +391,7 @@ if ($op == "update" )
 	redirect_header("viewtopic.php?topic_id=$topic_id", 1, _MD_POLL_DBUPDATED);
 	//exit();
 }
- 
+
 if ($op == "addmore" )
 {
 	$poll = new XoopsPoll($_GET['poll_id']);
@@ -433,7 +433,7 @@ if ($op == "addmore" )
 	//include ICMS_ROOT_PATH."/footer.php";
 	//exit();
 }
- 
+
 if ($op == "savemore" )
 {
 	$option_empty = true;
@@ -451,7 +451,7 @@ if ($op == "savemore" )
 		}
 	}
 	if ($option_empty) redirect_header("javascript:history.go(-1);", 2, _MD_ERROROCCURED.': '._MD_POLL_POLLOPTIONS.' !');
-	 
+
 	$poll = new XoopsPoll($poll_id);
 	$i = 0;
 	$option_color = (empty($_POST['option_color']))?NULL:
@@ -474,7 +474,7 @@ if ($op == "savemore" )
 	redirect_header("polls.php?op=edit&amp;poll_id=".$poll->getVar("poll_id")."&amp;topic_id=".$topic_id, 1, _MD_POLL_DBUPDATED);
 	//exit();
 }
- 
+
 if ($op == "delete" )
 {
 	//include ICMS_ROOT_PATH."/header.php";
@@ -484,7 +484,7 @@ if ($op == "delete" )
 	//include ICMS_ROOT_PATH."/footer.php";
 	//exit();
 }
- 
+
 if ($op == "delete_ok" )
 {
 	$poll = new XoopsPoll($poll_id);
@@ -505,7 +505,7 @@ if ($op == "delete_ok" )
 	redirect_header("viewtopic.php?topic_id=$topic_id", 1, _MD_POLL_DBUPDATED);
 	//exit();
 }
- 
+
 if ($op == "restart" )
 {
 	$poll = new XoopsPoll($_GET['poll_id']);
@@ -530,7 +530,7 @@ if ($op == "restart" )
 	//include ICMS_ROOT_PATH."/footer.php";
 	//exit();
 }
- 
+
 if ($op == "restart_ok" )
 {
 	$poll = new XoopsPoll($poll_id);
@@ -573,7 +573,7 @@ if ($op == "restart_ok" )
 	redirect_header("viewtopic.php?topic_id=$topic_id", 1, _MD_POLL_DBUPDATED);
 	//exit();
 }
- 
+
 if ($op == "log" )
 {
 	//include ICMS_ROOT_PATH."/header.php";
@@ -582,5 +582,5 @@ if ($op == "log" )
 	//include ICMS_ROOT_PATH."/footer.php";
 	//exit();
 }
- 
+
 include ICMS_ROOT_PATH."/footer.php";

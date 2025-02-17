@@ -213,7 +213,7 @@ if ($forumtopic->getVar('topic_subject')
 )
 {
 	$subjectpres = explode(',', icms::$module->config['subject_prefix']);
-	$topic_prefix = $subjectpres[intval($forumtopic->getVar('topic_subject'))]." ";
+	$topic_prefix = $subjectpres[(int)$forumtopic->getVar('topic_subject')]." ";
 }
 $icmsTpl->assign(array(
 'topic_title' => '<a href="'.$forumUrl['root'].'/viewtopic.php?viewmode='.$viewmode.'&amp;type='.$type.'&amp;topic_id='.$topic_id.'&amp;forum='.$forum_id.'">'. $topic_prefix.$forumtopic->getVar('topic_title').'</a>',

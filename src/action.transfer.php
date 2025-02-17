@@ -22,14 +22,14 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 die('Sorry, this feature is not ready yet!<br />');
 include "header.php";
- 
-$forum = intval(empty($_GET["forum"])?(empty($_POST["forum"])?0:$_POST["forum"]):$_GET["forum"] );
-$topic_id = intval(empty($_GET["topic_id"])?(empty($_POST["topic_id"])?0:$_POST["topic_id"]):$_GET["topic_id"] );
-$post_id = intval(empty($_GET["post_id"])?(empty($_POST["post_id"])?0:$_POST["post_id"]):$_GET["post_id"] );
- 
+
+$forum = (int)(empty($_GET["forum"]) ? (empty($_POST["forum"]) ? 0 : $_POST["forum"]) : $_GET["forum"]);
+$topic_id = (int)(empty($_GET["topic_id"]) ? (empty($_POST["topic_id"]) ? 0 : $_POST["topic_id"]) : $_GET["topic_id"]);
+$post_id = (int)(empty($_GET["post_id"]) ? (empty($_POST["post_id"]) ? 0 : $_POST["post_id"]) : $_GET["post_id"]);
+
 if (empty($post_id) )
 {
 	if (empty($_SERVER['HTTP_REFERER']))
@@ -65,16 +65,16 @@ if (empty($post_id) )
 		}
 	}
 }
- 
+
 $post_handler = icms_getmodulehandler('post', basename(__DIR__), 'iforum' );
 $post = $post_handler->get($post_id);
 if (!$approved = $post->getVar('approved')) die(_NOPERM);
- 
+
 $topic_handler = icms_getmodulehandler('topic', basename(__DIR__), 'iforum' );
 $forumtopic = $topic_handler->getByPost($post_id);
 $topic_id = $forumtopic->getVar('topic_id');
 if (!$approved = $forumtopic->getVar('approved')) die(_NOPERM);
- 
+
 $forum_handler = icms_getmodulehandler('forum', basename(__DIR__), 'iforum' );
 $forum = ($forum)?$forum:
 $forumtopic->getVar('forum_id');
@@ -82,14 +82,14 @@ $viewtopic_forum = $forum_handler->get($forum);
 if (!$forum_handler->getPermission($viewtopic_forum)) die(_NOPERM);
 	if (!$topic_handler->getPermission($viewtopic_forum, $forumtopic->getVar('topic_status'), "view")) die(_NOPERM);
 	//if ( !$forumdata =  $topic_handler->getViewData($topic_id, $forum) )die(_NOPERM);
- 
+
 $op = empty($_POST["op"])?"":
 $_POST["op"];
 $op = strtolower(trim($op));
- 
+
 $transfer_handler = icms_getmodulehandler("transfer", basename(__DIR__), 'iforum' );
 $op_options = $transfer_handler->getList();
- 
+
 // Display option form
 if (empty($_POST["op"]))
 {
@@ -120,20 +120,20 @@ else
 	$data["title"] = $post_data["subject"];
 	$data["content"] = $post_data["text"];
 	$data["time"] = formatTimestamp($post_data["date"]);
-	 
+
 	switch($op)
 	{
 		case "pdf":
 		$data['subtitle'] = $forumtopic->getVar('topic_title');
 		break;
-		 
+
 		// Use regular content
 		default:
 		break;
 	}
-	 
+
 	$ret = $transfer_handler->do_transfer($_POST["op"], $data);
-	 
+
 	include ICMS_ROOT_PATH."/header.php";
 	$ret = empty($ret)?"javascript: window.close();":
 	$ret;

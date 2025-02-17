@@ -22,7 +22,7 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 if (!defined('ICMS_ROOT_PATH'))
 {
 	exit();
@@ -31,20 +31,20 @@ require_once(ICMS_ROOT_PATH.'/modules/'.basename(dirname(dirname(__FILE__ ) ) ).
 if (!defined('IFORUM_NOTIFY_ITEMINFO') )
 {
 	define('IFORUM_NOTIFY_ITEMINFO', 1);
-	 
+
 	function iforum_notify_iteminfo($category, $item_id)
 	{
 		$module_handler = icms::handler('icms_module');
 		$module = $module_handler->getByDirname(basename(dirname(dirname(__FILE__ ) ) ));
-		 
+
 		if ($category == 'global')
 		{
 			$item['name'] = '';
 			$item['url'] = '';
 			return $item;
 		}
-		$item_id = intval($item_id);
-		 
+		$item_id = (int)$item_id;
+
 		if ($category == 'forum')
 		{
 			// Assume we have a valid forum id
@@ -59,7 +59,7 @@ if (!defined('IFORUM_NOTIFY_ITEMINFO') )
 			$item['url'] = ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewforum.php?forum=' . $item_id;
 			return $item;
 		}
-		 
+
 		if ($category == 'thread')
 		{
 			// Assume we have a valid topid id
@@ -74,7 +74,7 @@ if (!defined('IFORUM_NOTIFY_ITEMINFO') )
 			$item['url'] = ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewtopic.php?forum=' . $result_array['forum_id'] . '&topic_id=' . $item_id;
 			return $item;
 		}
-		 
+
 		if ($category == 'post')
 		{
 			// Assume we have a valid post id

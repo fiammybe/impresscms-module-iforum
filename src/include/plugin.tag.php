@@ -13,7 +13,7 @@ if (!defined('ICMS_ROOT_PATH'))
 	{
 	exit();
 }
- 
+
 /**
 * Get item fields:
 * title
@@ -29,7 +29,7 @@ if (!defined('ICMS_ROOT_PATH'))
 * @return boolean
 *
 */
- 
+
 $MyDirName = basename(dirname(dirname(__FILE__ ) ) );
 function iforum_tag_iteminfo(&$items)
 {
@@ -38,7 +38,7 @@ function iforum_tag_iteminfo(&$items)
 		return false;
 	}
 	$MyDirName = basename(dirname(dirname(__FILE__ ) ) );
-	 
+
 	$items_id = array();
 	foreach(array_keys($items) as $cat_id)
 	{
@@ -47,12 +47,12 @@ function iforum_tag_iteminfo(&$items)
 		foreach(array_keys($items[$cat_id]) as $item_id)
 		{
 			// In iforum, the item_id is "topic_id"
-			$items_id[] = intval($item_id);
+			$items_id[] = (int)$item_id;
 		}
 	}
 	$item_handler = icms_getmodulehandler('topic', $MyDirName, 'iforum' );
 	$items_obj = $item_handler->getObjects(new icms_db_criteria_Item("topic_id", "(".implode(", ", $items_id).")", "IN"), true);
-	 
+
 	foreach(array_keys($items) as $cat_id)
 	{
 		foreach(array_keys($items[$cat_id]) as $item_id)
@@ -70,7 +70,7 @@ function iforum_tag_iteminfo(&$items)
 	}
 	unset($items_obj);
 }
- 
+
 /**
 * Remove orphan tag-item links
 *
@@ -82,7 +82,7 @@ function iforum_tag_synchronization($mid)
 	$MyDirName = basename(dirname(dirname(__FILE__ ) ) );
 	$item_handler = icms_getmodulehandler('topic', $MyDirName, 'iforum' );
 	$link_handler = xoops_getmodulehandler("link", "tag");
-	 
+
 	/* clear tag-item links */
 	if ($link_handler->mysql_major_version() >= 4):
 	$sql = " DELETE FROM {$link_handler->table}". " WHERE ". "  tag_modid = {$mid}". "  AND ". "  ( tag_itemid NOT IN ". "   ( SELECT DISTINCT {$item_handler->keyName} ". "    FROM {$item_handler->table} ". "    WHERE {$item_handler->table}.approved > 0". "   ) ". "  )";
