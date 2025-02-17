@@ -305,7 +305,7 @@ function b_iforum_topic_show($options)
 		$block['topics'][] = $topic;
 		unset($topic);
 	}
-	$block['indexNav'] = intval($options[4]);
+	$block['indexNav'] = (int)$options[4];
 	$block['modulename'] = $modulename;
 
 	return $block;
@@ -452,7 +452,7 @@ function b_iforum_post_show($options)
 		$block['topics'][] = $topic;
 		unset($topic);
 	}
-	$block['indexNav'] = intval($options[4]);
+	$block['indexNav'] = (int)$options[4];
 	$block['modulename'] = $modulename;
 	return $block;
 }
@@ -561,7 +561,7 @@ function b_iforum_author_show($options)
 	}
 	$block['authors'] = & $author;
 	$block['disp_mode'] = $options[3]; // 0 - full view; 1 - lite view;
-	$block['indexNav'] = intval($options[4]);
+	$block['indexNav'] = (int)$options[4];
 	$block['modulename'] = $modulename;
 	return $block;
 }

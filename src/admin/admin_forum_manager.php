@@ -175,19 +175,19 @@ switch ($op)
 	if (!empty($_POST['dest']))
 	{
 		if (!empty($_GET['forum'])) $forum_id = (int)$_GET['forum'];
-			if (!empty($_POST['forum'])) $forum_id = intval($_POST['forum']);
+			if (!empty($_POST['forum'])) $forum_id = (int)$_POST['forum'];
 
 		$dest = $_POST['dest'];
 		if ($dest [0] == "f")
 		{
 			$pid = substr($dest, 1);
-			$forum =$forum_handler->get(intval($pid));
+			$forum =$forum_handler->get((int)$pid);
 			$cid = $forum->getVar("cat_id");
 			unset($forum);
 		}
 		else
 		{
-			$cid = intval($dest);
+			$cid = (int)$dest;
 			$pid = 0;
 		}
 		$bMoved = 0;

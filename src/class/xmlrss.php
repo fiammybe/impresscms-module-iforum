@@ -22,7 +22,7 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 /**
 * Description
 *
@@ -31,11 +31,11 @@
 * @link
 */
 class Xmlrss {
-	 
+
 	var $xml_version;
 	var $rss_version;
 	var $xml_encoding;
-	 
+
 	var $channel_title;
 	var $channel_link;
 	var $channel_desc;
@@ -45,18 +45,18 @@ class Xmlrss {
 	var $channel_category;
 	var $channel_generator;
 	var $channel_language;
-	 
+
 	var $image_title;
 	var $image_url;
 	var $image_link;
 	var $image_description;
 	var $image_height;
 	var $image_width;
-	 
+
 	var $max_items;
 	var $max_item_description;
 	var $items = array();
-	 
+
 	function __construct()
 	{
 		$this->xml_version = '1.0';
@@ -69,12 +69,12 @@ class Xmlrss {
 		$this->max_item_description = 0;
 		$this->items = array();
 	}
-	 
+
 	function setVarRss($var, $val)
 	{
 		$this->$var = $this->cleanup($val);
 	}
-	 
+
 	function addItem($title, $link, $description = '', $label = '', $pubdate = 0)
 	{
 		if (count($this->items) < $this->max_items)
@@ -92,7 +92,7 @@ class Xmlrss {
 			{
 				//$description = $label;
 			}
-			 
+
 			$title = $this->cleanup($title).' ' . $label;
 			$pubdate = $this->cleanup($pubdate);
 			$this->items[] = array('title' => $title, 'link' => $link, 'guid' => $link, 'description' => $description, 'pubdate' => $pubdate);
@@ -100,7 +100,7 @@ class Xmlrss {
 		 else return false;
 		return true;
 	}
-	 
+
 	function cleanup($text, $trim = 0)
 	{
 		if (strtolower($this->xml_encoding) == "utf-8" && strncasecmp(_CHARSET, $this->xml_encoding, 5))
@@ -108,20 +108,20 @@ class Xmlrss {
 			$text = XoopsLocal::convert_encoding($text, "utf-8");
 		}
 		if (!empty($trim))
-		$text = icms_core_DataFilter::icms_substr($text, 0, intval($trim));
+		$text = icms_core_DataFilter::icms_substr($text, 0, (int)$trim);
 		$text = htmlspecialchars($text, ENT_QUOTES);
-		 
+
 		return $text;
 	}
 }
- 
+
 class IforumXmlrssHandler {
 	function &create()
 	{
 		$xmlrss = new Xmlrss();
 		return $xmlrss;
 	}
-	 
+
 	function &get(&$rss)
 	{
 		$rss_array = array();
@@ -143,8 +143,8 @@ class IforumXmlrssHandler {
 		$rss_array['image_width'] = $rss->image_width;
 		$rss_array['image_height'] = $rss->image_height;
 		$rss_array['items'] = $rss->items;
-		 
+
 		return $rss_array;
 	}
-	 
+
 }

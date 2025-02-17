@@ -217,7 +217,7 @@ class IforumOnlineHandler {
 	*/
 	function gc($expire)
 	{
-		$sql = "DELETE FROM ".icms::$xoopsDB->prefix('bb_online')." WHERE online_updated < ".(time() - intval($expire));
+		$sql = "DELETE FROM ".icms::$xoopsDB->prefix('bb_online')." WHERE online_updated < ".(time() - (int)$expire);
 		icms::$xoopsDB->queryF($sql);
 
 		$online_handler = icms::handler('icms_core_Online');

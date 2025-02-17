@@ -113,7 +113,7 @@ switch($op)
 		echo "</tr>";
 		echo "<tr class='odd' align='left'>";
 		echo "<td>"._AM_IFORUM_REPORTTEXT.': '. icms_core_DataFilter::htmlSpecialchars($report['report_text']) . "</td>";
-		$uid = intval($report['reporter_uid']);
+		$uid = (int)$report['reporter_uid'];
 		$reporter_name = iforum_getUnameFromId($uid, icms::$module->config['show_realname']);
 		$reporter = (!empty($uid))? "<a href='" . ICMS_URL . "/userinfo.php?uid=".$uid."'>".$reporter_name."</a><br />":
 		"";

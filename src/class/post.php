@@ -621,7 +621,7 @@ class IforumPostHandler extends ArtObjectHandler {
 
 	function insertnewsubject($topic_id, $subject)
 	{
-		$sql = "UPDATE " . $this->db->prefix("bb_topics") . " SET topic_subject = " . intval($subject) . " WHERE topic_id = $topic_id";
+		$sql = "UPDATE " . $this->db->prefix("bb_topics") . " SET topic_subject = " . (int)$subject . " WHERE topic_id = $topic_id";
 		$result = $this->db->queryF($sql);
 		if (!$result)
 		{
@@ -934,7 +934,7 @@ class IforumPostHandler extends ArtObjectHandler {
 				$sql .= " ORDER BY ".$criteria->getSort()." ".$criteria->getOrder();
 			}
 		}
-		$result = $this->db->query($sql, intval($limit), intval($start));
+		$result = $this->db->query($sql, (int)$limit, (int)$start);
 		if (!$result)
 		{
 			iforum_message("IforumPostHandler::getPostsByLimit error:" . $sql);
@@ -994,7 +994,7 @@ class IforumPostHandler extends ArtObjectHandler {
 		$crit_expire = new icms_db_criteria_Compo(new icms_db_criteria_Item("approved", 0, "<="));
 		if (!empty($expire))
 		{
-			$crit_expire->add(new icms_db_criteria_Item("post_time", time()-intval($expire), "<"));
+			$crit_expire->add(new icms_db_criteria_Item("post_time", time()- (int)$expire, "<"));
 		}
 		return $this->deleteAll($crit_expire, true/*, true*/);
 	}

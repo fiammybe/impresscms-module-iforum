@@ -91,7 +91,7 @@ function &mod_getUnameFromIds( $uid, $usereal = false, $linked = false )
 function mod_getUnameFromId( $userid, $usereal = 0, $linked = false)
 {
 	$myts = icms_core_Textsanitizer::getInstance();
-	$userid = intval($userid);
+	$userid = (int)$userid;
 	if ($userid > 0) {
         $member_handler = icms::handler('icms_member');
         $user = $member_handler->getUser($userid);

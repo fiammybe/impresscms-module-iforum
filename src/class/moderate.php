@@ -196,7 +196,7 @@ class IforumModerateHandler extends ArtObjectHandler {
 	{
 		if ($isUid)
 		{
-			$criteria = "uid =".intval($item);
+			$criteria = "uid =". (int)$item;
 		}
 		else
 		{

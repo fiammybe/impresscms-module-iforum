@@ -303,7 +303,7 @@ if (icms::$module->config['enable_karma'] || icms::$module->config['allow_requir
 		{
 			foreach($karmas as $karma)
 			{
-				$karma_array[strval($karma)] = intval($karma);
+				$karma_array[(string)$karma] = (int)$karma;
 			}
 			$karma_select = new icms_form_elements_Select('', "post_karma", $post_karma);
 			$karma_select->addOptionArray($karma_array);
@@ -351,7 +351,7 @@ $submit_button->setExtra("tabindex='3'");
 
 $cancel_button = new icms_form_elements_Button('', 'cancel', _CANCEL, 'button');
 if (isset($topic_id) && $topic_id != "" )
-	$extra = "viewtopic.php?topic_id=".intval($topic_id);
+	$extra = "viewtopic.php?topic_id=". (int)$topic_id;
 else
 	$extra = "viewforum.php?forum=".$forum_obj->getVar('forum_id');
 $cancel_button->setExtra("onclick='location=\"".$extra."\"'");

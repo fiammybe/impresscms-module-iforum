@@ -104,7 +104,7 @@ class IforumReportHandler extends ArtObjectHandler {
 			$result = $this->db->query("SELECT COUNT(*) as report_count" . $tables_criteria . $forum_criteria . $result_criteria . " AND report_id $operator_for_position $report_id" . $order_criteria);
 			if ($result) $row = $this->db->fetchArray($result);
 				$position = $row['report_count'];
-			$start = intval($position / $perpage) * $perpage;
+			$start = (int)($position / $perpage) * $perpage;
 		}
 
 		$sql = "SELECT r.*, p.subject, p.topic_id, p.forum_id" . $tables_criteria . $forum_criteria . $result_criteria . $order_criteria;

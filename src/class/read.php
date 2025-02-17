@@ -160,7 +160,7 @@ class IforumReadHandler extends ArtObjectHandler {
 				return false;
 			}
 		}
-		$sql = "SELECT post_id ". " FROM ".$this->table. " WHERE read_item = ".intval($read_item). "  AND uid = ".intval($uid);
+		$sql = "SELECT post_id ". " FROM ".$this->table. " WHERE read_item = ". (int)$read_item . "  AND uid = ". (int)$uid;
 		if (!$result = $this->db->queryF($sql, 1))
 		{
 			return null;
@@ -199,7 +199,7 @@ class IforumReadHandler extends ArtObjectHandler {
 			}
 		}
 
-		$sql = "UPDATE ".$this->table. " SET post_id = ".intval($post_id).",". "  read_time =".time(). " WHERE read_item = ".intval($read_item). "  AND uid = ".intval($uid);
+		$sql = "UPDATE ".$this->table. " SET post_id = ". (int)$post_id .",". "  read_time =".time(). " WHERE read_item = ". (int)$read_item . "  AND uid = ". (int)$uid;
 		if ($this->db->queryF($sql) && $this->db->getAffectedRows())
 		{
 			return true;

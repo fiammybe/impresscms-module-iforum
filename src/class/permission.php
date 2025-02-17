@@ -247,7 +247,7 @@ class IforumPermissionHandler extends icms_member_groupperm_Handler {
 	{
 		$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item('gperm_modid', $gperm_modid));
 		$criteria->add(new icms_db_criteria_Item('gperm_name', $gperm_name));
-		$gperm_itemid = intval($gperm_itemid);
+		$gperm_itemid = (int)$gperm_itemid;
 		if ($gperm_itemid > 0)
 		{
 			$criteria->add(new icms_db_criteria_Item('gperm_itemid', $gperm_itemid));

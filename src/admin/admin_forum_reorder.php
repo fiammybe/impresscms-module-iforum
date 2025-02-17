@@ -22,14 +22,14 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 include 'admin_header.php';
- 
+
 if (isset($_POST['cat_orders'])) $cat_orders = $_POST['cat_orders'];
 if (isset($_POST['orders'])) $orders = $_POST['orders'];
 if (isset($_POST['cat'])) $cat = $_POST['cat'];
 if (isset($_POST['forum'])) $forum = $_POST['forum'];
- 
+
 if (!empty($_POST['submit']))
 {
 	for ($i = 0; $i < count($cat_orders); $i++)
@@ -40,7 +40,7 @@ if (!empty($_POST['submit']))
 			redirect_header("admin_forum_reorder.php", 1, _AM_IFORUM_FORUM_ERROR);
 		}
 	}
-	 
+
 	for ($i = 0; $i < count($orders); $i++)
 	{
 		$sql = "update " . icms::$xoopsDB->prefix("bb_forums") . " set forum_order = " . $orders[$i] . " WHERE forum_id=".$forum[$i];
@@ -57,7 +57,7 @@ else
 	$cat_orders = array();
 	$forum = array();
 	$cat = array();
-	 
+
 	icms_cp_header();
 	loadModuleAdminMenu(6, _AM_IFORUM_SETFORUMORDER);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
@@ -76,12 +76,12 @@ else
 	$categories = $category_handler->getAllCats();
 	$forum_handler = icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 	$forums = $forum_handler->getForumsByCategory();
-	 
+
 	$forums_array = array();
 	foreach ($forums as $forumid => $forum)
 	{
 		$forums_array[$forum->getVar('parent_forum')][] = array(
-		'forum_order' => intval($forum->getVar('forum_order')),
+		'forum_order' => (int)$forum->getVar('forum_order'),
 			'forum_id' => $forumid,
 			'forum_cid' => $forum->getVar('cat_id'),
 			'forum_name' => $forum->getVar('forum_name')
@@ -99,7 +99,7 @@ else
 			$forumsByCat[$forum['forum_cid']][] = $forum;
 		}
 	}
-	 
+
 	foreach($categories as $key => $onecat)
 	{
 		echo "<tr>";
@@ -110,7 +110,7 @@ else
 		echo "<input type='text' name='cat_orders[]' value='" . $onecat->getVar('cat_order') . "' size='5' maxlength='5' />";
 		echo "</td>";
 		echo "</tr>";
-		 
+
 		$forums = (!empty($forumsByCat[$onecat->getVar('cat_id')]))?$forumsByCat[$onecat->getVar('cat_id')]:
 		array();
 		if (count($forums) > 0)
@@ -125,7 +125,7 @@ else
 				echo "<input type='text' name='orders[]' value='" . $forum['forum_order'] . "' size='5' maxlength='5' />";
 				echo "</td>";
 				echo "</tr>";
-				 
+
 				if (isset($forum['subforum']))
 				{
 					foreach ($forum['subforum'] as $key => $subforum)
@@ -149,16 +149,16 @@ else
 		}
 	}
 	echo "<tr><td class='even' align='center' colspan='6'>";
-	 
+
 	echo "<input type='submit' name='submit' value='" . _SUBMIT . "' />";
-	 
+
 	echo "</td></tr>";
 	echo "</table>";
 	echo "</form>";
 }
- 
+
 echo"</td></tr></table>";
 echo "</fieldset>";
 icms_cp_footer();
- 
+
 ?>

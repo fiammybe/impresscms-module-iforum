@@ -417,7 +417,7 @@ class IforumForumHandler extends icms_ipf_Handler
             if (is_array($forum) && count($forum) > 0) {
                 $criteria_forum = ' AND t.forum_id IN (' . implode(',', array_keys($forum)) . ')';
             } elseif (!empty($forum)) {
-                $criteria_forum = ' AND t.forum_id =' . intval($forum);
+                $criteria_forum = ' AND t.forum_id =' . (int)$forum;
             } else {
                 $criteria_forum = '';
             }
@@ -544,7 +544,7 @@ class IforumForumHandler extends icms_ipf_Handler
             return true;
         }
         if (!is_object($object)) {
-            $object = $this->get(intval($object));
+            $object = $this->get((int)$object);
         }
         if (!$object->getVar("forum_id")) return false;
 
@@ -553,8 +553,8 @@ class IforumForumHandler extends icms_ipf_Handler
             $last_post = 0;
             $posts = 0;
             if ($row = icms::$xoopsDB->fetchArray($result)) {
-                $last_post = intval($row['last_post']);
-                $posts = intval($row['total']);
+                $last_post = (int)$row['last_post'];
+                $posts = (int)$row['total'];
             }
             if ($object->getVar("forum_last_post_id") != $last_post) {
                 $object->setVar("forum_last_post_id", $last_post);

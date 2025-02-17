@@ -135,7 +135,7 @@ class IforumTopicHandler extends ArtObjectHandler {
 	{
 		$topic = null;
 		if (!empty($action)):
-		$sql = "SELECT * FROM " . $this->table. " WHERE 1=1". (($forum_id > 0)?" AND forum_id=". (int)$forum_id :""). " AND topic_id ".(($action > 0)?">":"<").intval($topic_id). " ORDER BY topic_id ".(($action > 0)?"ASC":"DESC")." LIMIT 1";
+		$sql = "SELECT * FROM " . $this->table. " WHERE 1=1". (($forum_id > 0)?" AND forum_id=". (int)$forum_id :""). " AND topic_id ".(($action > 0)?">":"<"). (int)$topic_id . " ORDER BY topic_id ".(($action > 0)?"ASC":"DESC")." LIMIT 1";
 		if ($result = $this->db->query($sql))
 		{
 			if ($row = $this->db->fetchArray($result)):
@@ -350,7 +350,7 @@ class IforumTopicHandler extends ArtObjectHandler {
 	function delete(&$topic, $force = true)
 	{
 		$topic_id = is_object($topic)?$topic->getVar("topic_id"):
-		intval($topic);
+            (int)$topic;
 		if (empty($topic_id))
 		{
 			return false;
@@ -371,7 +371,7 @@ class IforumTopicHandler extends ArtObjectHandler {
 		if (iforum_isAdmin($forum)) return 1;
 
 		$forum = is_object($forum)?$forum->getVar('forum_id'):
-		intval($forum);
+            (int)$forum;
 		if ($forum < 1) return false;
 
 		if (!isset($_cachedTopicPerms))
@@ -413,7 +413,7 @@ class IforumTopicHandler extends ArtObjectHandler {
 	{
 		$crit_expire = new icms_db_criteria_Compo(new icms_db_criteria_Item("approved", 0, "<="));
 		//if(!empty($expire)){
-		$crit_expire->add(new icms_db_criteria_Item("topic_time", time()-intval($expire), "<"));
+		$crit_expire->add(new icms_db_criteria_Item("topic_time", time()- (int)$expire, "<"));
 		//}
 		return $this->deleteAll($crit_expire, true/*, true*/);
 	}
@@ -463,7 +463,7 @@ class IforumTopicHandler extends ArtObjectHandler {
 		}
 		if (!is_object($object))
 		{
-			$object = $this->get(intval($object));
+			$object = $this->get((int)$object);
 		}
 		if (!$object->getVar("topic_id")) return false;
 

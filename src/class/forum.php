@@ -164,7 +164,7 @@ class IforumForumHandler extends ArtObjectHandler {
 		$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item("1", 1));
 		if (is_numeric($cat) && $cat > 0)
 		{
-			$criteria->add(new icms_db_criteria_Item("cat_id", intval($cat)));
+			$criteria->add(new icms_db_criteria_Item("cat_id", (int)$cat));
 		}
 		elseif(is_array($cat) && count($cat) > 0)
 		{
@@ -270,7 +270,7 @@ class IforumForumHandler extends ArtObjectHandler {
 			}
 			elseif(!empty($forum))
 			{
-				$criteria_forum = ' AND t.forum_id ='.intval($forum);
+				$criteria_forum = ' AND t.forum_id ='. (int)$forum;
 			}
 			else
 			{
@@ -634,7 +634,7 @@ class IforumForumHandler extends ArtObjectHandler {
 			}
 			elseif(!empty($forum))
 			{
-				$criteria_forum = ' AND t.forum_id ='.intval($forum);
+				$criteria_forum = ' AND t.forum_id ='. (int)$forum;
 			}
 			else
 			{
@@ -783,7 +783,7 @@ class IforumForumHandler extends ArtObjectHandler {
 		}
 		if (!is_object($object))
 		{
-			$object = $this->get(intval($object));
+			$object = $this->get((int)$object);
 		}
 		if (!$object->getVar("forum_id")) return false;
 
@@ -793,8 +793,8 @@ class IforumForumHandler extends ArtObjectHandler {
 		$posts = 0;
 		if ($row = icms::$xoopsDB->fetchArray($result) )
 		{
-			$last_post = intval($row['last_post']);
-			$posts = intval($row['total']);
+			$last_post = (int)$row['last_post'];
+			$posts = (int)$row['total'];
 		}
 		if ($object->getVar("forum_last_post_id") != $last_post)
 		{
