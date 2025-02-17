@@ -210,7 +210,7 @@ function iforum_setcookie($name, $string = '', $expire = 0)
 		}
 		$string = implode(",", $value);
 	}
-	setcookie($forumCookie['prefix'].$name, $string, intval($expire), $forumCookie['path'], $forumCookie['domain'], $forumCookie['secure']);
+	setcookie($forumCookie['prefix'].$name, $string, (int)$expire, $forumCookie['path'], $forumCookie['domain'], $forumCookie['secure']);
 }
 
 function iforum_getcookie($name, $isArray = false)
@@ -281,7 +281,7 @@ function iforum_isModuleAdministrator($uid = 0, $mid = 0)
 	static $module_administrators = array();
 	if (isset($module_administrators[$mid][$uid])) return $module_administrators[$mid][$uid];
 
-	$sql = "SELECT COUNT(l.groupid) FROM ".icms::$xoopsDB->prefix('groups_users_link')." AS l". " LEFT JOIN ".icms::$xoopsDB->prefix('group_permission')." AS p ON p.gperm_groupid=l.groupid". " WHERE l.uid=".intval($uid). " AND p.gperm_modid = '1' AND p.gperm_name = 'module_admin' AND p.gperm_itemid = '".intval($mid)."'";
+	$sql = "SELECT COUNT(l.groupid) FROM ".icms::$xoopsDB->prefix('groups_users_link')." AS l". " LEFT JOIN ".icms::$xoopsDB->prefix('group_permission')." AS p ON p.gperm_groupid=l.groupid". " WHERE l.uid=". (int)$uid . " AND p.gperm_modid = '1' AND p.gperm_name = 'module_admin' AND p.gperm_itemid = '". (int)$mid ."'";
 	if (!$result = icms::$xoopsDB->query($sql))
 	{
 		$module_administrators[$mid][$uid] = null;
@@ -289,7 +289,7 @@ function iforum_isModuleAdministrator($uid = 0, $mid = 0)
 	else
 	{
 		list($count) = icms::$xoopsDB->fetchRow($result);
-		$module_administrators[$mid][$uid] = intval($count);
+		$module_administrators[$mid][$uid] = (int)$count;
 	}
 	return $module_administrators[$mid][$uid];
 }
@@ -300,12 +300,12 @@ function iforum_isModuleAdministrators($uid = array(), $mid = 0)
 	$module_administrators = array();
 
 	if (empty($uid)) return $module_administrators;
-	$sql = "SELECT COUNT(l.groupid) AS count, l.uid FROM ".icms::$xoopsDB->prefix('groups_users_link')." AS l". " LEFT JOIN ".icms::$xoopsDB->prefix('group_permission')." AS p ON p.gperm_groupid=l.groupid". " WHERE l.uid IN (".implode(", ", array_map("intval", $uid)).")". " AND p.gperm_modid = '1' AND p.gperm_name = 'module_admin' AND p.gperm_itemid = '".intval($mid)."'". " GROUP BY l.uid";
+	$sql = "SELECT COUNT(l.groupid) AS count, l.uid FROM ".icms::$xoopsDB->prefix('groups_users_link')." AS l". " LEFT JOIN ".icms::$xoopsDB->prefix('group_permission')." AS p ON p.gperm_groupid=l.groupid". " WHERE l.uid IN (".implode(", ", array_map("intval", $uid)).")". " AND p.gperm_modid = '1' AND p.gperm_name = 'module_admin' AND p.gperm_itemid = '". (int)$mid ."'". " GROUP BY l.uid";
 	if ($result = icms::$xoopsDB->query($sql))
 	{
 		while ($myrow = icms::$xoopsDB->fetchArray($result))
 		{
-			$module_administrators[$myrow["uid"]] = intval($myrow["count"]);
+			$module_administrators[$myrow["uid"]] = (int)$myrow["count"];
 		}
 	}
 	return $module_administrators;
@@ -316,9 +316,9 @@ function iforum_isAdministrator($user = -1, $mid = 0)
 	static $administrators, $iforum_mid;
 
 	if (is_numeric($user) && $user == -1) $user = & icms::$user;
-	if (!is_object($user) && intval($user) < 1) return false;
+	if (!is_object($user) && (int)$user < 1) return false;
 	$uid = (is_object($user))?$user->getVar('uid'):
-	intval($user);
+        (int)$user;
 
 	if (!$mid)
 	{
@@ -347,17 +347,17 @@ function iforum_isAdmin($forum = 0, $user = -1)
 	static $_cachedModerators;
 
 	if (is_numeric($user) && $user == -1) $user = & icms::$user;
-	if (!is_object($user) && intval($user) < 1) return false;
+	if (!is_object($user) && (int)$user < 1) return false;
 	$uid = (is_object($user))?$user->getVar('uid'):
-	intval($user);
+        (int)$user;
 	if (iforum_isAdministrator($uid)) return true;
 
 	$cache_id = (is_object($forum))?$forum->getVar('forum_id'):
-	intval($forum);
+        (int)$forum;
 	if (!isset($_cachedModerators[$cache_id]))
 	{
 		$forum_handler = icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
-		if (!is_object($forum)) $forum = $forum_handler->get(intval($forum));
+		if (!is_object($forum)) $forum = $forum_handler->get((int)$forum);
 		$_cachedModerators[$cache_id] = $forum_handler->getModerators($forum);
 	}
 	return in_array($uid, $_cachedModerators[$cache_id]);
@@ -368,19 +368,19 @@ function iforum_isModerator($forum = 0, $user = -1)
 	static $_cachedModerators;
 
 	if (is_numeric($user) && $user == -1) $user = & icms::$user;
-	if (!is_object($user) && intval($user) < 1)
+	if (!is_object($user) && (int)$user < 1)
 	{
 		return false;
 	}
 	$uid = (is_object($user))?$user->getVar('uid'):
-	intval($user);
+        (int)$user;
 
 	$cache_id = (is_object($forum))?$forum->getVar('forum_id'):
-	intval($forum);
+        (int)$forum;
 	if (!isset($_cachedModerators[$cache_id]))
 	{
 		$forum_handler = icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
-		if (!is_object($forum)) $forum = $forum_handler->get(intval($forum));
+		if (!is_object($forum)) $forum = $forum_handler->get((int)$forum);
 		$_cachedModerators[$cache_id] = $forum_handler->getModerators($forum);
 	}
 	return in_array($uid, $_cachedModerators[$cache_id]);
@@ -397,9 +397,9 @@ function iforum_checkSubjectPrefixPermission($forum = 0, $user = -1)
 		return true;
 	}
 	if (is_numeric($user) && $user == -1) $user = & icms::$user;
-	if (!is_object($user) && intval($user) < 1) return false;
+	if (!is_object($user) && (int)$user < 1) return false;
 	$uid = (is_object($user))?$user->getVar('uid'):
-	intval($user);
+        (int)$user;
 	if (icms::$module->config['subject_prefix_level'] == 2)
 	{
 		return true;
@@ -424,7 +424,7 @@ function get_total_topics($forum_id = "")
 	$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item("approved", 0, ">"));
 	if ($forum_id )
 	{
-		$criteria->add(new icms_db_criteria_Item("forum_id", intval($forum_id)));
+		$criteria->add(new icms_db_criteria_Item("forum_id", (int)$forum_id));
 	}
 	return $topic_handler->getCount($criteria);
 }
@@ -440,10 +440,10 @@ function get_total_posts($id = 0, $type = "all")
 	switch ($type )
 	{
 		case 'forum':
-		if ($id > 0) $criteria->add(new icms_db_criteria_Item("forum_id", intval($id)));
+		if ($id > 0) $criteria->add(new icms_db_criteria_Item("forum_id", (int)$id));
 		break;
 		case 'topic':
-		if ($id > 0) $criteria->add(new icms_db_criteria_Item("topic_id", intval($id)));
+		if ($id > 0) $criteria->add(new icms_db_criteria_Item("topic_id", (int)$id));
 		break;
 		case 'all':
 		default:
@@ -624,8 +624,8 @@ function iforum_sinceSelectBox($selected = 100)
 function iforum_getSinceTime($since = 100)
 {
 	if ($since == 1000) return 0;
-	if ($since > 0) return intval($since) * 24 * 3600;
-	else return intval(abs($since)) * 3600;
+	if ($since > 0) return (int)$since * 24 * 3600;
+	else return (int)abs($since) * 3600;
 }
 
 function iforum_welcome($user = -1 )
@@ -678,13 +678,13 @@ function iforum_synchronization($type = "")
 	$iforumConfig = iforum_load_config();
 	if (empty($type) || in_array("post", $type)):
 	$post_handler = icms_getmodulehandler("post", basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
-	$expires = isset($iforumConfig["pending_expire"])?intval($iforumConfig["pending_expire"]):
+	$expires = isset($iforumConfig["pending_expire"])? (int)$iforumConfig["pending_expire"] :
 	7;
 	$post_handler->cleanExpires($expires * 24 * 3600);
 	endif;
 	if (empty($type) || in_array("topic", $type)):
 	$topic_handler = icms_getmodulehandler("topic", basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
-	$expires = isset($iforumConfig["pending_expire"])?intval($iforumConfig["pending_expire"]):
+	$expires = isset($iforumConfig["pending_expire"])? (int)$iforumConfig["pending_expire"] :
 	7;
 	$topic_handler->cleanExpires($expires * 24 * 3600);
 	$topic_handler->synchronization();
