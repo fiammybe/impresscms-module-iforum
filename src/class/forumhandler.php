@@ -1,10 +1,10 @@
 <?php
 
-class IforumForumHandler extends icms_ipf_Handler
+class IforumForumHandler extends ArtObjectHandler
 {
     function __construct(&$db)
     {
-        parent::__construct($db, 'forum', 'forum_id', 'title', 'description', 'news');
+        parent::__construct($db, 'bb_forums', 'Forum', 'forum_id', 'forum_name');
 
         //$this->ArtObjectHandler($db, 'bb_forums', 'Forum', 'forum_id', 'forum_name');
     }

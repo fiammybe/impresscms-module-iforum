@@ -127,20 +127,20 @@ class IforumForumHandler extends ArtObjectHandler {
 		parent::__construct($db, 'bb_forums', 'Forum', 'forum_id', 'forum_name');
 	}
 
-	function insert(&$forum, $force = true)
+	function insert(&$obj, $force = false, $checkObject = true, $debug = false)
 	{
-		if (!parent::insert($forum, true))
+		if (!parent::insert($Obj, true))
 		{
-			icms_core_Message::error($forum->getErrors());
+			icms_core_Message::error($Obj->getErrors());
 			return false;
 		}
 
-		if ($forum->isNew())
+		if ($Obj->isNew())
 		{
-			$this->applyPermissionTemplate($forum);
+			$this->applyPermissionTemplate($Obj);
 		}
 
-		return $forum->getVar('forum_id');
+		return $Obj->getVar('forum_id');
 	}
 
 	function delete(&$forum, $force = true)
