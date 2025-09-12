@@ -22,29 +22,29 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 include("admin_header.php");
- 
+
 icms_cp_header();
-loadModuleAdminMenu(7, _AM_IFORUM_PRUNE_TITLE);
+icms::$module->displayAdminMenu(7, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_PRUNE_TITLE);
 echo "<fieldset style='border: #e8e8e8 1px solid;'>
 	<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_PRUNE_TITLE . "</legend>";
 echo"<br /><br /><table width='100%' border='0' cellspacing='1' class='outer'>" . "<tr><td class='odd'>";
- 
+
 if (!empty($_POST['submit']))
 {
 	$post_list = null;
 	$topic_list = null;
 	$topics_number = 0;
 	$posts_number = 0;
-	 
+
 	if (empty($_POST["forums"]))
             redirect_header("./admin_forum_prune.php", 1, _AM_IFORUM_PRUNE_FORUMSELERROR);
         elseif (!is_array($_POST["forums"]))
             $selected_forums[] = $myts->addSlashes($_POST["forums"]);
         else
             $selected_forums = $myts->addSlashes($_POST["forums"]);
-        
+
 	$prune_days = $myts->addSlashes($_POST["days"]);
 	$prune_ddays = time() - $prune_days;
 	$archive = $myts->addSlashes($_POST["archive"]);
@@ -65,7 +65,7 @@ if (!empty($_POST['submit']))
                 if ($hot != 0) $sql .= " AND t.topic_replies < " . $hot . " ";
 
                 $sql .= " AND p.post_time<= " . $prune_ddays . " ";
-	
+
                 // Ok now we have the sql query completed, go for topic_id's and posts_id's
                 $topics = array();
                 if (!$result = icms::$xoopsDB->query($sql))
@@ -157,7 +157,7 @@ if (!empty($_POST['submit']))
                 {
                     $forum_name = $row['forum_name'];
                 }
-                
+
                 $tform = new icms_form_Theme(_AM_IFORUM_PRUNE_RESULTS_TITLE, "prune_results", xoops_getenv('PHP_SELF'));
                 $tform->addElement(new icms_form_elements_Label(_AM_IFORUM_PRUNE_RESULTS_FORUMS, $forum_name));
                 $tform->addElement(new icms_form_elements_Label(_AM_IFORUM_PRUNE_RESULTS_TOPICS, $topics_number));
@@ -169,7 +169,7 @@ else
 {
 	$sform = new icms_form_Theme(_AM_IFORUM_PRUNE_TITLE, "prune", xoops_getenv('PHP_SELF'));
 	$sform->setExtra('enctype="multipart/form-data"');
-	 
+
 	/* Let User select the number of days
 	$sform->addElement( new icms_form_elements_Text(_AM_IFORUM_PRUNE_DAYS , 'days', 5, 10,100 ), true );
 	*/
@@ -179,7 +179,7 @@ else
 	$days = new icms_form_elements_Select(_AM_IFORUM_PRUNE_DAYS, 'days', null , 1, false);
 	$days->addOptionArray(array(604800 => _AM_IFORUM_PRUNE_WEEK, 1209600 => _AM_IFORUM_PRUNE_2WEEKS, 2592000 => _AM_IFORUM_PRUNE_MONTH, 5184000 => _AM_IFORUM_PRUNE_2MONTH, 10368000 => _AM_IFORUM_PRUNE_4MONTH, 31536000 => _AM_IFORUM_PRUNE_YEAR , 63072000 => _AM_IFORUM_PRUNE_2YEARS));
 	$sform->addElement($days);
-	 
+
 	$checkbox = new icms_form_elements_Checkbox(_AM_IFORUM_PRUNE_FORUMS, 'forums');
 	$radiobox = new icms_form_elements_Radio(_AM_IFORUM_PRUNE_STORE, 'store');
 	// PUAJJ I HATE IT, please tidy up
@@ -204,43 +204,43 @@ else
 	{
 		echo "DB ERROR";
 	}
-	 
+
 	$sform->addElement($checkbox);
-	 
+
 	$sticky_confirmation = new icms_form_elements_Radio(_AM_IFORUM_PRUNE_STICKY, 'sticky', 1);
 	$sticky_confirmation->addOption(1, _AM_IFORUM_PRUNE_YES);
 	$sticky_confirmation->addOption(0, _AM_IFORUM_PRUNE_NO);
 	$sform->addElement($sticky_confirmation);
-	 
+
 	$digest_confirmation = new icms_form_elements_Radio(_AM_IFORUM_PRUNE_DIGEST, 'digest', 1);
 	$digest_confirmation->addOption(1, _AM_IFORUM_PRUNE_YES);
 	$digest_confirmation->addOption(0, _AM_IFORUM_PRUNE_NO);
 	$sform->addElement($digest_confirmation);
-	 
+
 	$lock_confirmation = new icms_form_elements_Radio(_AM_IFORUM_PRUNE_LOCK, 'lock', 0);
 	$lock_confirmation->addOption(1, _AM_IFORUM_PRUNE_YES);
 	$lock_confirmation->addOption(0, _AM_IFORUM_PRUNE_NO);
 	$sform->addElement($lock_confirmation);
-	 
+
 	$hot_confirmation = new icms_form_elements_Select(_AM_IFORUM_PRUNE_HOT, 'hot', null , 1, false);
 	$hot_confirmation->addOptionArray(array('0' => 0, '5' => 5, '10' => 10, '15' => 15, '20' => 20, '25' => 25, '30' => 30));
 	$sform->addElement($hot_confirmation);
-	 
+
 	$sform->addElement($radiobox);
-	 
+
 	$archive_confirmation = new icms_form_elements_Radio(_AM_IFORUM_PRUNE_ARCHIVE, 'archive', 1);
 	$archive_confirmation->addOption(1, _AM_IFORUM_PRUNE_YES);
 	$archive_confirmation->addOption(0, _AM_IFORUM_PRUNE_NO);
 	$sform->addElement($archive_confirmation);
-	 
+
 	$button_tray = new icms_form_elements_Tray('', '');
 	$button_tray->addElement(new icms_form_elements_Button('', 'submit', _AM_IFORUM_PRUNE_SUBMIT, 'submit'));
 	$button_tray->addElement(new icms_form_elements_Button('', 'reset', _AM_IFORUM_PRUNE_RESET, 'reset'));
 	$sform->addElement($button_tray);
-	 
+
 	$sform->display();
 }
- 
+
 echo"</td></tr></table>";
 echo "</fieldset>";
 icms_cp_footer();

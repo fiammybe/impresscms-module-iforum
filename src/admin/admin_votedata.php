@@ -66,7 +66,7 @@ switch ($op) {
 	}
 
 	icms_cp_header();
-	loadModuleAdminMenu(10, _AM_IFORUM_VOTE_RATINGINFOMATION);
+	icms::$module->displayAdminMenu(10, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_VOTE_RATINGINFOMATION);
 
 
 	echo "

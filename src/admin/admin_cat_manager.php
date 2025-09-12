@@ -116,7 +116,7 @@ switch ($op)
 	$categories = $category_handler->getAllCats();
 	if (count($categories) == 0)
 	{
-		loadModuleAdminMenu(1, _AM_IFORUM_CREATENEWCATEGORY);
+		icms::$module->displayAdminMenu(1, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_CREATENEWCATEGORY);
 		echo " <fieldset style='border: #e8e8e8 1px solid;'>
 			<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_CREATENEWCATEGORY . "</legend>";
 		echo "<br />";
@@ -126,7 +126,7 @@ switch ($op)
 		break;
 	}
 
-	loadModuleAdminMenu(1, _AM_IFORUM_CATADMIN);
+	icms::$module->displayAdminMenu(1, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_CATADMIN);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_CATADMIN . "</legend>";
 	echo"<br />";
@@ -158,7 +158,7 @@ switch ($op)
 
 	case "mod":
 	$fc =$category_handler->get($cat_id);
-	loadModuleAdminMenu(1, _AM_IFORUM_EDITCATEGORY . $fc->getVar('cat_title'));
+	icms::$module->displayAdminMenu(1, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_EDITCATEGORY . $fc->getVar('cat_title'));
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_EDITCATEGORY . "</legend>";
 	echo"<br />";
@@ -223,7 +223,7 @@ switch ($op)
 
 	case "default":
 	default:
-	loadModuleAdminMenu(1, _AM_IFORUM_CREATENEWCATEGORY);
+	icms::$module->displayAdminMenu(1, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_CREATENEWCATEGORY);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_CREATENEWCATEGORY . "</legend>";
 	echo "<br />";

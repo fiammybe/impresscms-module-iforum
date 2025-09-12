@@ -170,7 +170,7 @@ icms_cp_header();
 switch ($op)
 {
 	case 'moveforum':
-	loadModuleAdminMenu(2, "");
+	icms::$module->displayAdminMenu(2, icms::$module->getVar('name'));
 
 	if (!empty($_POST['dest']))
 	{
@@ -253,7 +253,7 @@ switch ($op)
 	break;
 
 	case 'mergeforum':
-	loadModuleAdminMenu(2, "");
+	icms::$module->displayAdminMenu(2, icms::$module->getVar('name'));
 
 	if (!empty($_POST['dest_forum']))
 	{
@@ -332,7 +332,7 @@ switch ($op)
 	break;
 
 	case 'sync':
-	loadModuleAdminMenu(5, _AM_IFORUM_SYNCFORUM);
+	icms::$module->displayAdminMenu(5, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_SYNCFORUM);
 	if (isset($_POST['submit']))
 	{
 		iforum_synchronization();
@@ -432,7 +432,7 @@ switch ($op)
 
 	case "mod":
 	$ff = $forum_handler->get($forum);
-	loadModuleAdminMenu(2, _AM_IFORUM_EDITTHISFORUM . $ff->getVar('forum_name'));
+	icms::$module->displayAdminMenu(2, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_EDITTHISFORUM . $ff->getVar('forum_name'));
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_EDITTHISFORUM . "</legend>";
 	echo"<br /><br /><table width='100%' border='0' cellspacing='1' class='outer'><tr><td class='odd'>";
@@ -460,7 +460,7 @@ switch ($op)
 	break;
 
 	case 'manage':
-	loadModuleAdminMenu(2, _AM_IFORUM_FORUM_MANAGER);
+	icms::$module->displayAdminMenu(2, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_FORUM_MANAGER);
 
 	$echo = "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_FORUM_MANAGER . "</legend>";
@@ -556,7 +556,7 @@ switch ($op)
 
 	case "default":
 	default:
-	loadModuleAdminMenu(2, _AM_IFORUM_CREATENEWFORUM);
+	icms::$module->displayAdminMenu(2, icms::$module->getVar('name') . ' | ' . _AM_IFORUM_CREATENEWFORUM);
 	echo "<fieldset style='border: #e8e8e8 1px solid;'>
 		<legend style='display: inline; font-weight: bold; color: #900;'>" . _AM_IFORUM_CREATENEWFORUM . "</legend>";
 	echo "<br />";

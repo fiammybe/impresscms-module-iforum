@@ -116,6 +116,16 @@ class Digest extends icms_ipf_Object {
 class IforumDigestHandler extends icms_core_ObjectHandler {
 	public $last_digest;
 
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
+	function __construct(&$db)
+	{
+		parent::__construct($db, 'bb_digest', 'Digest', 'digest_id', 'digest_time');
+	}
+
 	function &create($isNew = true)
 	{
 		$digest = new Digest($this);
