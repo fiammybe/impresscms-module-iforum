@@ -28,8 +28,7 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.ini.php';
-iforum_load_object();
+// Art framework no longer needed - using ImpressCMS IPF
 
 /**
 * A handler for read/unread handling
@@ -40,19 +39,34 @@ iforum_load_object();
 * @copyright copyright (c) 2005 XOOPS.org
 */
 
-class Read extends ArtObject {
-	function __construct($type)
+/**
+ * Read object class for iForum
+ */
+class Read extends icms_ipf_Object {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumReadHandler object
+	 * @param array $data array of read data
+	 * @param string $type read type (forum or topic)
+	 */
+	function __construct(&$handler, $data = array(), $type = 'forum')
 	{
-		parent::__construct("bb_reads_".$type);
-		$this->initVar('read_id', XOBJ_DTYPE_INT);
-		$this->initVar('uid', XOBJ_DTYPE_INT);
-		$this->initVar('read_item', XOBJ_DTYPE_INT);
-		$this->initVar('post_id', XOBJ_DTYPE_INT);
-		$this->initVar('read_time', XOBJ_DTYPE_INT);
+		$this->initVar('read_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('uid', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('read_item', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('post_id', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('read_time', XOBJ_DTYPE_INT, null, true);
+
+		parent::__construct($handler, $data);
 	}
 }
 
-class IforumReadHandler extends ArtObjectHandler {
+/**
+ * Read handler class for iForum
+ */
+class IforumReadHandler extends icms_ipf_Handler {
 	/**
 	* Object type.
 	* <ul>
@@ -89,15 +103,36 @@ class IforumReadHandler extends ArtObjectHandler {
 	*/
 	public $mode;
 
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 * @param string $type read type (forum or topic)
+	 */
 	function __construct(&$db, $type)
 	{
 		$type = ("forum" == $type) ? "forum" : "topic";
-		parent::__construct($db, 'bb_reads_'.$type, 'Read'.$type, 'read_id', 'post_id');
+		parent::__construct($db, 'read' . $type, 'read_id', 'Read' . $type);
 
     $this->type = $type;
 		$iforumConfig = iforum_load_config();
 		$this->lifetime = !empty($iforumConfig["read_expire"]) ? $iforumConfig["read_expire"] * 24 * 3600 : 30 * 24 * 3600;
 		$this->mode = isset($iforumConfig["read_mode"]) ? $iforumConfig["read_mode"] : 2;
+	}
+
+	/**
+	 * Create a new read object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Read new read object
+	 */
+	function &create($isNew = true)
+	{
+		$read = new Read($this, array(), $this->type);
+		if ($isNew) {
+			$read->setNew();
+		}
+		return $read;
 	}
 
 	/**
@@ -151,9 +186,9 @@ class IforumReadHandler extends ArtObjectHandler {
 	{
 		if (empty($uid))
 		{
-			if (is_object($GLOBALS["xoopsUser"]))
+			if (is_object(icms::$user))
 			{
-				$uid = $GLOBALS["xoopsUser"]->getVar("uid");
+				$uid = icms::$user->getVar("uid");
 			}
 			else
 			{
@@ -189,9 +224,9 @@ class IforumReadHandler extends ArtObjectHandler {
 	{
 		if (empty($uid))
 		{
-			if (is_object($GLOBALS["xoopsUser"]))
+			if (icms::$user)
 			{
-				$uid = $GLOBALS["xoopsUser"]->getVar("uid");
+				$uid = icms::$user->getVar("uid");
 			}
 			else
 			{
@@ -243,9 +278,9 @@ class IforumReadHandler extends ArtObjectHandler {
 
 		if (empty($uid))
 		{
-			if (is_object($GLOBALS["xoopsUser"]))
+			if (is_object(icms::$user))
 			{
-				$uid = $GLOBALS["xoopsUser"]->getVar("uid");
+				$uid = icms::$user->getVar("uid");
 			}
 			else
 			{

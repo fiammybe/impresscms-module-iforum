@@ -28,31 +28,66 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__DIR__) ).'/include/functions.ini.php';
-iforum_load_object();
+/**
+ * Text object class for iForum
+ */
+class Ntext extends icms_ipf_Object {
 
-class Ntext extends ArtObject {
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumTextHandler object
+	 * @param array $data array of text data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		parent::__construct("bb_posts_text");
-		$this->initVar('post_id', XOBJ_DTYPE_INT);
-		$this->initVar('post_text', XOBJ_DTYPE_TXTAREA);
-		$this->initVar('post_edit', XOBJ_DTYPE_TXTAREA);
+		$this->initVar('post_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('post_text', XOBJ_DTYPE_TXTAREA, null, false);
+		$this->initVar('post_edit', XOBJ_DTYPE_TXTAREA, null, false);
+
+		parent::__construct($handler, $data);
 	}
 }
 
-class IforumTextHandler extends ArtObjectHandler {
+/**
+ * Text handler class for iForum
+ */
+class IforumTextHandler extends icms_ipf_Handler {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
 	function __construct(&$db)
 	{
-		parent::__construct($db, 'bb_posts_text', 'Ntext', 'post_id');
+		parent::__construct($db, 'text', 'post_id', 'Ntext');
+	}
+
+	/**
+	 * Create a new text object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Ntext new text object
+	 */
+	function &create($isNew = true)
+	{
+		$text = new Ntext($this);
+		if ($isNew) {
+			$text->setNew();
+		}
+		return $text;
 	}
 
 	/**
 	* clean orphan items from database
 	*
-	* @return  bool true on success
+     * @param string $table_link
+     * @param string $field_link
+     * @param string $field_object
+     * @return  bool true on success
 	*/
-    function cleanOrphan($table_link = "", $field_link = "", $field_object = "")
+	function cleanOrphan($table_link = "", $field_link = "", $field_object = "")
 	{
 		return parent::cleanOrphan($this->db->prefix("bb_posts"), "post_id");
 	}

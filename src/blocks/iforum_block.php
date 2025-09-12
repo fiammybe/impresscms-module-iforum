@@ -324,7 +324,7 @@ function b_iforum_post_show($options)
 	global $icmsConfig;
 	global $access_forums;
 	$modulename = basename(dirname(__FILE__, 2));
-	$db =Database::getInstance();
+	$db = icms_db_Factory::instance();
 	$myts =icms_core_Textsanitizer::getInstance();
 	$block = array();
 	$i = 0;
@@ -470,7 +470,7 @@ function b_iforum_author_show($options)
 	global $icmsConfig;
 	global $access_forums;
 	$modulename = basename(dirname(__FILE__, 2));
-	$db =Database::getInstance();
+	$db = icms_db_Factory::instance();
 	$myts =icms_core_Textsanitizer::getInstance();
 	$block = array();
 	$i = 0;

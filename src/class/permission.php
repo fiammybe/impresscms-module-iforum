@@ -39,7 +39,7 @@ class IforumPermissionHandler extends icms_member_groupperm_Handler {
 	*
 	* @return array
 	*/
-	public function getPermissions($type = "forum", $id = 0)
+	function getPermissions($type = "forum", $id = 0)
 	{
 		static $permissions = array(), $suspension = array();
 
@@ -48,7 +48,7 @@ class IforumPermissionHandler extends icms_member_groupperm_Handler {
 
 		if (is_object(icms::$module) && icms::$module->getVar("dirname") == basename(dirname(__DIR__) ))
 		{
-			$modid = icms::$module->getVar('mid');
+			$modid = icms::$module->getVar("mid");
 		}
 		else
 		{
@@ -58,8 +58,10 @@ class IforumPermissionHandler extends icms_member_groupperm_Handler {
 			unset($module);
 		}
 
-		$uid = is_object($GLOBALS["xoopsUser"])?$GLOBALS["xoopsUser"]->getVar("uid"):0;
+		$uid = icms::$user->getVar('uid');
+		0;
 		$ip = iforum_getIP(true);
+
 		if (($type == "forum") && !iforum_isAdmin($id) && !isset($suspension[$uid][$id]) && !empty(icms::$module->config['enable_usermoderate']))
 			{
 			$moderate_handler = icms_getmodulehandler('moderate', basename(dirname(__DIR__) ), 'iforum' );

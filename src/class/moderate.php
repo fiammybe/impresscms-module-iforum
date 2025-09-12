@@ -28,8 +28,7 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.ini.php';
-iforum_load_object();
+// Art framework no longer needed - using ImpressCMS IPF
 
 /**
 * A handler for User moderation management
@@ -40,25 +39,59 @@ iforum_load_object();
 * @copyright copyright (c) 2005 XOOPS.org
 */
 
-class Moderate extends ArtObject {
+/**
+ * Moderate object class for iForum
+ */
+class Moderate extends icms_ipf_Object {
 
-	public function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumModerateHandler object
+	 * @param array $data array of moderate data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		parent::__construct("bb_moderates");
-		$this->initVar('mod_id', XOBJ_DTYPE_INT);
-		$this->initVar('mod_start', XOBJ_DTYPE_INT);
-		$this->initVar('mod_end', XOBJ_DTYPE_INT);
-		$this->initVar('mod_desc', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('uid', XOBJ_DTYPE_INT);
-		$this->initVar('ip', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('forum_id', XOBJ_DTYPE_INT);
+		$this->initVar('mod_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('mod_start', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('mod_end', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('mod_desc', XOBJ_DTYPE_TXTBOX, null, false, 255);
+		$this->initVar('uid', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('ip', XOBJ_DTYPE_TXTBOX, null, false, 255);
+		$this->initVar('forum_id', XOBJ_DTYPE_INT, null, true);
+
+		parent::__construct($handler, $data);
 	}
 }
 
-class IforumModerateHandler extends ArtObjectHandler {
-	public function __construct(&$db)
+/**
+ * Moderate handler class for iForum
+ */
+class IforumModerateHandler extends icms_ipf_Handler {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
+	function __construct(&$db)
 	{
-        parent::__construct($db, 'bb_moderates', 'Moderate', 'mod_id', 'uid');
+        parent::__construct($db, 'moderate', 'mod_id', 'Moderate');
+	}
+
+	/**
+	 * Create a new moderate object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Moderate new moderate object
+	 */
+	function &create($isNew = true)
+	{
+		$moderate = new Moderate($this);
+		if ($isNew) {
+			$moderate->setNew();
+		}
+		return $moderate;
 	}
 
 	/**
@@ -79,12 +112,12 @@ class IforumModerateHandler extends ArtObjectHandler {
 	* Check if a user is moderated, according to his uid and ip
 	*
 	*
-	* @param int $uid user id
-	* @param string $ip user ip
+	* @param int  $uid user id
+	* @param string  $ip user ip
 	*/
-	function verifyUser(int $uid = -1, string $ip = "", $forum = 0)
+	function verifyUser($uid = -1, $ip = "", $forum = 0)
 	{
-		if (!empty(icms::$module->config['cache_enabled']))
+		if (!empty($GLOBALS["icmsModuleConfig"]['cache_enabled']))
 		{
 			$forums = $this->forumList($uid, $ip);
 			return in_array($forum, $forums);
@@ -139,7 +172,7 @@ class IforumModerateHandler extends ArtObjectHandler {
 		{
 			return $forums[$uid][$ip];
 		}
-		if (!empty(icms::$module->config['cache_enabled']))
+		if (!empty($GLOBALS["icmsModuleConfig"]['cache_enabled']))
 		{
 			$forums[$uid][$ip] = iforum_getsession("sf".$uid."_".ip2long($ip), true);
 			if (is_array($forums[$uid][$ip]) && count($forums[$uid][$ip]))
@@ -178,7 +211,7 @@ class IforumModerateHandler extends ArtObjectHandler {
 		}
 		$forums[$uid][$ip] = count($_forums)?array_keys($_forums):
 		array(-1);
-		if (!empty(icms::$module->config['cache_enabled']))
+		if (!empty($GLOBALS["icmsModuleConfig"]['cache_enabled']))
 		{
 			iforum_setsession("sf".$uid."_".ip2long($ip), $forums[$uid][$ip]);
 		}
@@ -222,7 +255,7 @@ class IforumModerateHandler extends ArtObjectHandler {
 	*
 	* @return  bool true on success
 	*/
-	function cleanOrphan($table_link = "", $field_link = "", $field_object = "")
+	function cleanOrphan()
 	{
 		/* for MySQL 4.1+ */
 		if ($this->mysql_major_version() >= 4):

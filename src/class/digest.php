@@ -23,7 +23,10 @@
 * @version  $Id$
 */
 
-class Digest extends icms_core_Object {
+/**
+ * Digest object class for iForum
+ */
+class Digest extends icms_ipf_Object {
 	public $digest_id;
 	public $digest_time;
 	public $digest_content;
@@ -32,14 +35,20 @@ class Digest extends icms_core_Object {
 	public $isHtml = false;
 	public $isSummary = true;
 
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumDigestHandler object
+	 * @param array $data array of digest data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		$this->initVar('digest_id', XOBJ_DTYPE_INT);
-		$this->initVar('digest_time', XOBJ_DTYPE_INT);
-		$this->initVar('digest_content', XOBJ_DTYPE_TXTAREA);
+		$this->initVar('digest_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('digest_time', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('digest_content', XOBJ_DTYPE_TXTAREA, null, false);
 		$this->items = array();
 
-		parent::__construct();
+		parent::__construct($handler, $data);
 	}
 
 	function setHtml()
@@ -109,7 +118,7 @@ class IforumDigestHandler extends icms_core_ObjectHandler {
 
 	function &create($isNew = true)
 	{
-		$digest = new Digest();
+		$digest = new Digest($this);
 		if ($isNew)
 		{
 			$digest->setNew();

@@ -22,22 +22,17 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 if (!defined('ICMS_ROOT_PATH'))
 	{
 	exit();
 }
- 
+
 if (defined("IFORUM_FUNCTIONS_INI")) return;
  define("IFORUM_FUNCTIONS_INI", 1);
- 
-include_once(ICMS_ROOT_PATH."/modules/".basename(dirname(__FILE__, 2))."/class/art/functions.php");
- 
-function iforum_load_object()
-{
-	return load_object();
-}
- 
+
+// Art framework no longer needed - using ImpressCMS IPF
+
 function iforum_message($message )
 {
 	if (!empty(icms::$module->config["do_debug"]))
@@ -55,7 +50,7 @@ function iforum_message($message )
 	}
 	return;
 }
- 
+
 function &iforum_load_config()
 {
 	static $moduleConfig;
@@ -63,12 +58,12 @@ function &iforum_load_config()
 	{
 		return $moduleConfig;
 	}
-	 
-	if (isset(icms::$module) && is_object(icms::$module) && icms::$module->getVar("dirname", "n") == basename(dirname(__FILE__, 2)))
+
+	if (isset(icms::$module) && is_object(icms::$module) && icms::$module->getVar("dirname", "n") == basename(dirname(dirname(__FILE__ ) ) ))
 	{
-		if (!empty(icms::$module->config))
+		if (!empty($GLOBALS["icmsModuleConfig"]))
 		{
-			$moduleConfig = & icms::$module->config;
+			$moduleConfig = & $GLOBALS["icmsModuleConfig"];
 		}
 		else
 		{
@@ -78,8 +73,8 @@ function &iforum_load_config()
 	else
 	{
 		$module_handler = icms::handler('icms_module');
-		$module = $module_handler->getByDirname(basename(dirname(__FILE__, 2)));
-		 
+		$module = $module_handler->getByDirname(basename(dirname(dirname(__FILE__ ) ) ));
+
 		$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item('conf_modid', $module->getVar('mid')));
 		$configs = icms::$config->getConfigs($criteria);
 		foreach(array_keys($configs) as $i)
@@ -88,32 +83,32 @@ function &iforum_load_config()
 		}
 		unset($configs);
 	}
-	if ($customConfig = @include(ICMS_ROOT_PATH."/modules/".basename(dirname(__FILE__, 2))."/include/plugin.php"))
+	if ($customConfig = @include(ICMS_ROOT_PATH."/modules/".basename(dirname(dirname(__FILE__ ) ) )."/include/plugin.php"))
 	{
 		$moduleConfig = array_merge($moduleConfig, $customConfig);
 	}
 	return $moduleConfig;
 }
- 
+
 function getConfigForBlock()
 {
 	return iforum_load_config();
-	 
+
 	static $iforumConfig;
 	if (isset($iforumConfig))
 	{
 		return $iforumConfig;
 	}
-	 
-	if (is_object(icms::$module) && icms::$module->getVar("dirname") == basename(dirname(__FILE__, 2)))
+
+	if (is_object(icms::$module) && icms::$module->getVar("dirname") == basename(dirname(dirname(__FILE__ ) ) ))
 	{
-		$iforumConfig = & icms::$module->config;
+		$iforumConfig = & $GLOBALS["icmsModuleConfig"];
 	}
 	else
 	{
 		$module_handler = icms::handler('icms_module');
-		$iforum = $module_handler->getByDirname(basename(dirname(__FILE__, 2)));
-		 
+		$iforum = $module_handler->getByDirname(basename(dirname(dirname(__FILE__ ) ) ));
+
 		$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item('conf_modid', $iforum->getVar('mid')));
 		$criteria->add(new icms_db_criteria_Item('conf_name', "('show_realname', 'subject_prefix', 'allow_require_reply')", "IN"));
 		$configs = icms::$config->getConfigs($criteria);
@@ -125,8 +120,8 @@ function getConfigForBlock()
 	}
 	return $iforumConfig;
 }
- 
- 
+
+
 // Backword compatible
 function iforum_load_lang_file($filename, $module = '', $default = 'english' )
 {
@@ -134,7 +129,7 @@ function iforum_load_lang_file($filename, $module = '', $default = 'english' )
 	{
 		return xoops_load_lang_file($filename, $module, $default);
 	}
-	 
+
 	$lang = $GLOBALS['icmsConfig']['language'];
 	$path = ICMS_ROOT_PATH . (empty($module) ? '/' : "/modules/$module/" ) . 'language';
 	if (!($ret = @include_once("$path/$lang/$filename.php" ) ) )
@@ -143,7 +138,7 @@ function iforum_load_lang_file($filename, $module = '', $default = 'english' )
 	}
 	return $ret;
 }
- 
+
 // Adapted from PMA_getIp() [phpmyadmin project]
 function iforum_getIP($asString = false)
 {

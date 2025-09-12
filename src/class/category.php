@@ -28,30 +28,61 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__DIR__) ).'/include/functions.ini.php';
-iforum_load_object();
+/**
+ * Category object class for iForum
+ */
+class Category extends icms_ipf_Object {
 
-class Category extends ArtObject {
-
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumCategoryHandler object
+	 * @param array $data array of category data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		parent::__construct("bb_categories");
-		$this->initVar('cat_id', XOBJ_DTYPE_INT);
-		$this->initVar('pid', XOBJ_DTYPE_INT, 0);
-		$this->initVar('cat_title', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('cat_image', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('cat_description', XOBJ_DTYPE_TXTAREA);
-		$this->initVar('cat_order', XOBJ_DTYPE_INT);
+		$this->initVar('cat_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('pid', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('cat_title', XOBJ_DTYPE_TXTBOX, null, true, 255);
+		$this->initVar('cat_image', XOBJ_DTYPE_TXTBOX, null, false, 255);
+		$this->initVar('cat_description', XOBJ_DTYPE_TXTAREA, null, false);
+		$this->initVar('cat_order', XOBJ_DTYPE_INT, 0, false);
 		//$this->initVar('cat_state', XOBJ_DTYPE_INT);
-		$this->initVar('cat_url', XOBJ_DTYPE_URL);
+		$this->initVar('cat_url', XOBJ_DTYPE_URL, null, false, 255);
 		//$this->initVar('cat_showdescript', XOBJ_DTYPE_INT);
+
+		parent::__construct($handler, $data);
 	}
 }
 
-class IforumCategoryHandler extends ArtObjectHandler {
+/**
+ * Category handler class for iForum
+ */
+class IforumCategoryHandler extends icms_ipf_Handler {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
 	function __construct(&$db)
 	{
-		parent::__construct($db, 'bb_categories', 'Category', 'cat_id', 'cat_title');
+		parent::__construct($db, 'category', 'cat_id', 'Category');
+	}
+
+	/**
+	 * Create a new category object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Category new category object
+	 */
+	function &create($isNew = true)
+	{
+		$category = new Category($this);
+		if ($isNew) {
+			$category->setNew();
+		}
+		return $category;
 	}
 
 	function &getAllCats($permission = false, $idAsKey = true, $tags = null)

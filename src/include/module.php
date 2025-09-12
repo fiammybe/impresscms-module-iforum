@@ -22,20 +22,20 @@
 * @author  modified by stranger
 * @version  $Id$
 */
- 
+
 defined('ICMS_ROOT_PATH') or exit();
 
 if (defined("XOOPS_MODULE_IFORUM_FUCTIONS")) exit();
 define("XOOPS_MODULE_IFORUM_FUCTIONS", 1);
- 
+
 @include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/plugin.php';
 include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.php';
- 
-iforum_load_object();
+
+// Art framework no longer needed - using ImpressCMS IPF
 function icms_module_update_iforum(&$module, $oldversion = null, $olddbversion = null) {
 	$icmsDatabaseUpdater = icms_db_legacy_Factory::getDatabaseUpdater();
 	$iforumConfig = iforum_load_config();
-	 
+
 	$newDbVersion = 1;
 	if ($olddbversion < $newDbVersion) {
 		echo "Database migrate to version " . $newDbVersion . "<br />";
@@ -52,10 +52,10 @@ function icms_module_update_iforum(&$module, $oldversion = null, $olddbversion =
 		iforum_synchronization();
 	}
 	$icmsDatabaseUpdater->updateModuleDBVersion($newDbVersion, basename(dirname(__FILE__, 2)));
-	 
+
 	return true;
 }
- 
+
 function icms_module_install_iforum(&$module) {
 	/* Create a test category */
 	$category_handler = icms_getmodulehandler('category', basename(dirname(__FILE__, 2)), 'iforum' );
@@ -68,7 +68,7 @@ function icms_module_install_iforum(&$module) {
 	if (!$cat_id = $category_handler->insert($category)) {
 		return true;
 	}
-	 
+
 	/* Create a forum for test */
 	$forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 2)), 'iforum' );
 	$forum = $forum_handler->create();
@@ -88,7 +88,7 @@ function icms_module_install_iforum(&$module) {
 	$forum->setVar('attach_ext', "zip|jpg|gif");
 	$forum->setVar('hot_threshold', 20);
 	$forum_id = $forum_handler->insert($forum);
-	 
+
 	/* Set corresponding permissions for the category and the forum */
 	$module_id = $module->getVar("mid") ;
 	$gperm_handler = icms::handler("icms_member_groupperm");
@@ -105,7 +105,7 @@ function icms_module_install_iforum(&$module) {
 			$gperm_handler->addRight("forum_".$item, $forum_id, $group_id, $module_id);
 		}
 	}
-	 
+
 	/* Create a test post */
 	$post_handler = icms_getmodulehandler('post', basename(dirname(dirname(__FILE__))), 'iforum' );
 	$forumpost = $post_handler->create();
@@ -123,10 +123,10 @@ function icms_module_install_iforum(&$module) {
 	$forumpost->setVar('post_time', time());
 	$forumpost->setVar('post_text', _MI_IFORUM_INSTALL_POST_TEXT, true);
 	$postid = $post_handler->insert($forumpost);
-	 
+
 	return true;
 }
- 
+
 function iforum_setModuleConfig(&$module, $isUpdate = false) {
 	return true;
 }

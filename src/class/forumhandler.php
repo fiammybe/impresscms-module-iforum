@@ -4,9 +4,22 @@ class IforumForumHandler extends icms_ipf_Handler
 {
     function __construct(&$db)
     {
-        parent::__construct($db, 'forum', 'forum_id', 'title', 'description', 'news');
+        parent::__construct($db, 'forum', 'forum_id', 'Forum');
+    }
 
-        //$this->ArtObjectHandler($db, 'bb_forums', 'Forum', 'forum_id', 'forum_name');
+    /**
+     * Create a new forum object
+     *
+     * @param bool $isNew whether the object is new
+     * @return Forum new forum object
+     */
+    function &create($isNew = true)
+    {
+        $forum = new Forum($this);
+        if ($isNew) {
+            $forum->setNew();
+        }
+        return $forum;
     }
 
     function insert(&$forum, $force = false,$checkObject = true,$debug=false)
@@ -640,7 +653,7 @@ class IforumForumHandler extends icms_ipf_Handler
                 } elseif ($post_obj->getVar("poster_name")) {
                     $_forum_data["forum_lastpost_user"] = $post_obj->getVar("poster_name");
                 } else {
-                    $_forum_data["forum_lastpost_user"] = icms_core_DataFilter::htmlSpecialchars(icms::$config->getConfig("anonymous"));
+                    $_forum_data["forum_lastpost_user"] = icms_core_DataFilter::htmlSpecialchars($GLOBALS["icmsConfig"]["anonymous"]);
                 }
 
                 $_forum_data['forum_lastpost_time'] = formatTimestamp($post_obj->getVar('post_time'));

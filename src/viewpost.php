@@ -197,11 +197,11 @@ elseif(!empty(icms::$module->config['rss_enable']))
 }
 $icmsTpl->assign('xoops_module_header', $icms_module_header);
 $icmsTpl->assign('xoops_pagetitle', $icms_pagetitle);
+$member_handler = icms::handler('icms_member');
 
 $userid_array = array();
 if (count($poster_array) > 0)
 {
-	$member_handler = icms::handler('icms_member');
 	$userid_array = array_keys($poster_array);
 	$user_criteria = "(".implode(",", $userid_array).")";
 	$users = $member_handler->getUsers(new icms_db_criteria_Item('uid', $user_criteria, 'IN'), true);

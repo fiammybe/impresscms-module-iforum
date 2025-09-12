@@ -28,33 +28,41 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__DIR__) ).'/include/functions.ini.php';
-iforum_load_object();
+/**
+ * Topic object class for iForum
+ */
+class Topic extends icms_ipf_Object {
 
-class Topic extends ArtObject {
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumTopicHandler object
+	 * @param array $data array of topic data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		parent::__construct("bb_topics");
-		$this->initVar('topic_id', XOBJ_DTYPE_INT);
-		$this->initVar('topic_title', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('topic_poster', XOBJ_DTYPE_INT);
-		$this->initVar('topic_time', XOBJ_DTYPE_INT);
-		$this->initVar('topic_views', XOBJ_DTYPE_INT);
-		$this->initVar('topic_replies', XOBJ_DTYPE_INT);
-		$this->initVar('topic_last_post_id', XOBJ_DTYPE_INT);
-		$this->initVar('forum_id', XOBJ_DTYPE_INT);
-		$this->initVar('topic_status', XOBJ_DTYPE_INT);
-		$this->initVar('topic_subject', XOBJ_DTYPE_INT);
-		$this->initVar('topic_sticky', XOBJ_DTYPE_INT);
-		$this->initVar('topic_digest', XOBJ_DTYPE_INT);
-		$this->initVar('digest_time', XOBJ_DTYPE_INT);
-		$this->initVar('approved', XOBJ_DTYPE_INT);
-		$this->initVar('poster_name', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('rating', XOBJ_DTYPE_OTHER);
-		$this->initVar('votes', XOBJ_DTYPE_INT);
-		$this->initVar('topic_haspoll', XOBJ_DTYPE_INT);
-		$this->initVar('poll_id', XOBJ_DTYPE_INT);
-		$this->initVar('topic_tags', XOBJ_DTYPE_SOURCE);
+		$this->initVar('topic_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('topic_title', XOBJ_DTYPE_TXTBOX, null, true, 255);
+		$this->initVar('topic_poster', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('topic_time', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('topic_views', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_replies', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_last_post_id', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('forum_id', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('topic_status', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_subject', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_sticky', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_digest', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('digest_time', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('approved', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('poster_name', XOBJ_DTYPE_TXTBOX, null, false, 255);
+		$this->initVar('rating', XOBJ_DTYPE_OTHER, null, false);
+		$this->initVar('votes', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_haspoll', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('poll_id', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('topic_tags', XOBJ_DTYPE_SOURCE, null, false);
+
+		parent::__construct($handler, $data);
 	}
 
 	function incrementCounter()
@@ -64,10 +72,34 @@ class Topic extends ArtObject {
 	}
 }
 
-class IforumTopicHandler extends ArtObjectHandler {
+/**
+ * Topic handler class for iForum
+ */
+class IforumTopicHandler extends icms_ipf_Handler {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
 	function __construct(&$db)
 	{
-		parent::__construct($db, 'bb_topics', 'Topic', 'topic_id', 'topic_title');
+		parent::__construct($db, 'topic', 'topic_id', 'Topic');
+	}
+
+	/**
+	 * Create a new topic object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Topic new topic object
+	 */
+	function &create($isNew = true)
+	{
+		$topic = new Topic($this);
+		if ($isNew) {
+			$topic->setNew();
+		}
+		return $topic;
 	}
 
 	function &get($id, $var = null)
@@ -264,7 +296,8 @@ class IforumTopicHandler extends ArtObjectHandler {
 			$start = (int)($position / $perpage) * $perpage;
 		}
 
-		$sql = 'SELECT p.*, t.* FROM ' . $this->db->prefix('bb_posts') . ' p, ' . $this->db->prefix('bb_posts_text') . " t WHERE p.topic_id=" . $topic->getVar('topic_id') . " AND p.post_id = t.post_id" . $approve_criteria . " ORDER BY p.post_id $order";
+		$sql = 'SELECT p.*, t.* FROM ' . $this->db->prefix('bb_posts') . ' p, ' . $this->db->prefix('bb_posts_text') . " t WHERE p.topic_id=" . $topic->getVar('topic_id') . " AND p.post_id = t.post_id" . $approve_criteria . " ORDER BY p.post_id ASC";
+//		$sql = 'SELECT p.*, t.* FROM ' . $this->db->prefix('bb_posts') . ' p, ' . $this->db->prefix('bb_posts_text') . " t WHERE p.topic_id=" . $topic->getVar('topic_id') . " AND p.post_id = t.post_id" . $approve_criteria . " ORDER BY p.post_id $order";
 		$result = $this->db->query($sql, $perpage, $start);
 		if (!$result)
 		{

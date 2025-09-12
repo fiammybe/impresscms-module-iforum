@@ -62,9 +62,12 @@ class IforumReadtopicHandler extends IforumReadHandler {
 	/**
 	* clean orphan items from database
 	*
-	* @return  bool true on success
+     * @param string $table_link
+     * @param string $field_link
+     * @param string $field_object
+     * @return  bool true on success
 	*/
-    function cleanOrphan($table_link = "", $field_link = "", $field_object = "")
+	function cleanOrphan($table_link = "", $field_link = "", $field_object = "")
 	{
 		parent::cleanOrphan($this->db->prefix("bb_posts"), "post_id");
 		return parent::cleanOrphan($this->db->prefix("bb_topics"), "topic_id", "read_item");

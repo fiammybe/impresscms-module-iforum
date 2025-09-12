@@ -28,28 +28,59 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__DIR__) ).'/include/functions.ini.php';
-iforum_load_object();
+/**
+ * Report object class for iForum
+ */
+class Report extends icms_ipf_Object {
 
-class Report extends ArtObject {
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumReportHandler object
+	 * @param array $data array of report data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		parent::__construct("bb_report");
-		$this->initVar('report_id', XOBJ_DTYPE_INT);
-		$this->initVar('post_id', XOBJ_DTYPE_INT);
-		$this->initVar('reporter_uid', XOBJ_DTYPE_INT);
-		$this->initVar('reporter_ip', XOBJ_DTYPE_INT);
-		$this->initVar('report_time', XOBJ_DTYPE_INT);
-		$this->initVar('report_text', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('report_result', XOBJ_DTYPE_INT);
-		$this->initVar('report_memo', XOBJ_DTYPE_TXTBOX);
+		$this->initVar('report_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('post_id', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('reporter_uid', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('reporter_ip', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('report_time', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('report_text', XOBJ_DTYPE_TXTBOX, null, false, 255);
+		$this->initVar('report_result', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('report_memo', XOBJ_DTYPE_TXTBOX, null, false, 255);
+
+		parent::__construct($handler, $data);
 	}
 }
 
-class IforumReportHandler extends ArtObjectHandler {
+/**
+ * Report handler class for iForum
+ */
+class IforumReportHandler extends icms_ipf_Handler {
 
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
 	function __construct(&$db) {
-    	parent::__construct($db, 'bb_report', 'Report', 'report_id');
+    	parent::__construct($db, 'report', 'report_id', 'Report');
+	}
+
+	/**
+	 * Create a new report object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Report new report object
+	 */
+	function &create($isNew = true)
+	{
+		$report = new Report($this);
+		if ($isNew) {
+			$report->setNew();
+		}
+		return $report;
 	}
 
 	function &getByPost($posts)

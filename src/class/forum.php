@@ -28,42 +28,49 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.ini.php';
-iforum_load_object();
+/**
+ * Forum object class for iForum
+ */
+class Forum extends icms_ipf_Object {
 
-class Forum extends ArtObject {
-
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumForumHandler object
+	 * @param array $data array of forum data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-		parent::__construct("bb_forums");
-		$this->initVar('forum_id', XOBJ_DTYPE_INT);
-		$this->initVar('forum_name', XOBJ_DTYPE_TXTBOX);
-		$this->initVar('forum_desc', XOBJ_DTYPE_TXTAREA);
-		$this->initVar('forum_moderator', XOBJ_DTYPE_ARRAY, serialize(array()));
-		$this->initVar('forum_topics', XOBJ_DTYPE_INT);
-		$this->initVar('forum_posts', XOBJ_DTYPE_INT);
-		$this->initVar('forum_last_post_id', XOBJ_DTYPE_INT);
-		$this->initVar('cat_id', XOBJ_DTYPE_INT);
-		$this->initVar('forum_type', XOBJ_DTYPE_INT, 0); // 0 - active; 1 - inactive
-		$this->initVar('parent_forum', XOBJ_DTYPE_INT);
-		$this->initVar('allow_html', XOBJ_DTYPE_INT, 0); // To be added in 3.01: 0 - disabled; 1 - enabled; 2 - checked by default
-		$this->initVar('allow_sig', XOBJ_DTYPE_INT, 1);
-		$this->initVar('allow_subject_prefix', XOBJ_DTYPE_INT, 1);
-		$this->initVar('hot_threshold', XOBJ_DTYPE_INT, 20);
-		$this->initVar('allow_polls', XOBJ_DTYPE_INT, 0);
+		$this->initVar('forum_id', XOBJ_DTYPE_INT, null, false);
+		$this->initVar('forum_name', XOBJ_DTYPE_TXTBOX, null, true, 255);
+		$this->initVar('forum_desc', XOBJ_DTYPE_TXTAREA, null, false);
+		$this->initVar('forum_moderator', XOBJ_DTYPE_ARRAY, serialize(array()), false);
+		$this->initVar('forum_topics', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('forum_posts', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('forum_last_post_id', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('cat_id', XOBJ_DTYPE_INT, null, true);
+		$this->initVar('forum_type', XOBJ_DTYPE_INT, 0, false); // 0 - active; 1 - inactive
+		$this->initVar('parent_forum', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('allow_html', XOBJ_DTYPE_INT, 0, false); // To be added in 3.01: 0 - disabled; 1 - enabled; 2 - checked by default
+		$this->initVar('allow_sig', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('allow_subject_prefix', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('hot_threshold', XOBJ_DTYPE_INT, 20, false);
+		$this->initVar('allow_polls', XOBJ_DTYPE_INT, 0, false);
 		//$this->initVar('allow_attachments', XOBJ_DTYPE_INT);
-		$this->initVar('attach_maxkb', XOBJ_DTYPE_INT, 100);
-		$this->initVar('attach_ext', XOBJ_DTYPE_TXTAREA, "zip|jpg|gif");
-		$this->initVar('forum_order', XOBJ_DTYPE_INT, 99);
+		$this->initVar('attach_maxkb', XOBJ_DTYPE_INT, 100, false);
+		$this->initVar('attach_ext', XOBJ_DTYPE_TXTAREA, "zip|jpg|gif", false);
+		$this->initVar('forum_order', XOBJ_DTYPE_INT, 99, false);
 		/*
 		* For desc
 		*
 		*/
-		$this->initVar("dohtml", XOBJ_DTYPE_INT, 1);
-		$this->initVar("dosmiley", XOBJ_DTYPE_INT, 1);
-		$this->initVar("doxcode", XOBJ_DTYPE_INT, 1);
-		$this->initVar("doimage", XOBJ_DTYPE_INT, 1);
-		$this->initVar("dobr", XOBJ_DTYPE_INT, 1);
+		$this->initVar("dohtml", XOBJ_DTYPE_INT, 1, false);
+		$this->initVar("dosmiley", XOBJ_DTYPE_INT, 1, false);
+		$this->initVar("doxcode", XOBJ_DTYPE_INT, 1, false);
+		$this->initVar("doimage", XOBJ_DTYPE_INT, 1, false);
+		$this->initVar("dobr", XOBJ_DTYPE_INT, 1, false);
+
+		parent::__construct($handler, $data);
 	}
 
 	// Get moderators in uname or in uid
@@ -84,7 +91,7 @@ class Forum extends ArtObject {
 		}
 		if (count($moderators_new) > 0)
 		{
-			include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.php';
+			include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(dirname(__FILE__ ) ) ).'/include/functions.php';
 			$moderators_new = iforum_getUnameFromIds($moderators_new);
 			foreach($moderators_new as $id => $name)
 			{
@@ -114,33 +121,57 @@ class Forum extends ArtObject {
 		{
 			return $ret;
 		}
-		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.php';
+		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(dirname(__FILE__ ) ) ).'/include/functions.php';
 		$moderators = iforum_getUnameFromIds($valid_moderators, !empty(icms::$module->config['show_realname']), true);
 		$ret = implode(", ", $moderators);
 		return $ret;
 	}
 }
 
-class IforumForumHandler extends ArtObjectHandler {
+/**
+ * Forum handler class for iForum
+ */
+class IforumForumHandler extends icms_ipf_Handler {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
 	function __construct(&$db)
 	{
-		parent::__construct($db, 'bb_forums', 'Forum', 'forum_id', 'forum_name');
+		parent::__construct($db, 'forum', 'forum_id', 'Forum');
 	}
 
-	function insert(&$forum, $force = true)
+	/**
+	 * Create a new forum object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Forum new forum object
+	 */
+	function &create($isNew = true)
 	{
-		if (!parent::insert($forum, true))
+		$forum = new Forum($this);
+		if ($isNew) {
+			$forum->setNew();
+		}
+		return $forum;
+	}
+
+	function insert(&$obj, $force = false, $checkObject = true, $debug = false)
+	{
+		if (!parent::insert($Obj, true))
 		{
-			icms_core_Message::error($forum->getErrors());
+			icms_core_Message::error($Obj->getErrors());
 			return false;
 		}
 
-		if ($forum->isNew())
+		if ($Obj->isNew())
 		{
-			$this->applyPermissionTemplate($forum);
+			$this->applyPermissionTemplate($Obj);
 		}
 
-		return $forum->getVar('forum_id');
+		return $Obj->getVar('forum_id');
 	}
 
 	function delete(&$forum, $force = true)
@@ -148,7 +179,7 @@ class IforumForumHandler extends ArtObjectHandler {
 		// RMV-NOTIFY
 		xoops_notification_deletebyitem (icms::$module->getVar('mid'), 'forum', $forum->getVar('forum_id'));
 		// Get list of all topics in forum, to delete them too
-		$topic_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 2)), 'iforum' );
+		$topic_handler = icms_getmodulehandler('topic', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		$topic_handler->deleteAll(new icms_db_criteria_Item("forum_id", $forum->getVar('forum_id')), true, true);
 		$this->updateAll("parent_forum", $forum->getVar('parent_forum'), new icms_db_criteria_Item("parent_forum", $forum->getVar('forum_id')));
 		$this->deletePermission($forum);
@@ -160,7 +191,7 @@ class IforumForumHandler extends ArtObjectHandler {
 		$_cachedForums = array();
 		$perm_string = (empty($permission))?'all':
 		$permission;
-		$forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 2)), 'iforum' );
+		$forum_handler = icms_getmodulehandler('forum', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item("1", 1));
 		if (is_numeric($cat) && $cat > 0)
 		{
@@ -441,19 +472,19 @@ class IforumForumHandler extends ArtObjectHandler {
 					else
 					{
 						$topic_page_jump .= '[<a href="viewtopic.php?topic_id=' . $myrow['topic_id'] . '&amp;start=' . (($i - 1) * icms::$module->config['posts_per_page']) . '">' . $i . '</a>]';
-						$topic_page_jump_icon = "<a class='doicon' href='" . ICMS_URL . "/modules/".basename(dirname(__FILE__, 2))."/viewtopic.php?topic_id=" . $myrow['topic_id'] . "&amp;start=" . (($i - 1) * icms::$module->config['posts_per_page']) . "#forumpost" . $myrow['post_id'] . "'>" . _MD_LASTPOST . "&nbsp;" . iforum_displayImage($forumImage['docicon']) . "</a>";
+						$topic_page_jump_icon = "<a class='doicon' href='" . ICMS_URL . "/modules/".basename(dirname(dirname(__FILE__ ) ) )."/viewtopic.php?topic_id=" . $myrow['topic_id'] . "&amp;start=" . (($i - 1) * icms::$module->config['posts_per_page']) . "#forumpost" . $myrow['post_id'] . "'>" . _MD_LASTPOST . "&nbsp;" . iforum_displayImage($forumImage['docicon']) . "</a>";
 					}
 				}
 			}
 			else
 			{
-				$topic_page_jump_icon = "<a class='doicon' href='" . ICMS_URL . "/modules/".basename(dirname(__FILE__, 2))."/viewtopic.php?topic_id=" . $myrow['topic_id'] . "#forumpost" . $myrow['post_id'] . "'>"  . _MD_LASTPOST . "&nbsp;" . iforum_displayImage($forumImage['docicon']) . "</a>";
+				$topic_page_jump_icon = "<a class='doicon' href='" . ICMS_URL . "/modules/".basename(dirname(dirname(__FILE__ ) ) )."/viewtopic.php?topic_id=" . $myrow['topic_id'] . "#forumpost" . $myrow['post_id'] . "'>"  . _MD_LASTPOST . "&nbsp;" . iforum_displayImage($forumImage['docicon']) . "</a>";
 			}
 			// ------------------------------------------------------
 			// => topic array
 			if (is_object($viewall_forums[$myrow['forum_id']]))
 				{
-				$forum_link = '<a href="' . ICMS_URL . '/modules/'.basename(dirname(__FILE__, 2)).'/viewforum.php?forum=' . $myrow['forum_id'] . '">' . $viewall_forums[$myrow['forum_id']]->getVar('forum_name') . '</a>';
+				$forum_link = '<a href="' . ICMS_URL . '/modules/'.basename(dirname(dirname(__FILE__ ) ) ).'/viewforum.php?forum=' . $myrow['forum_id'] . '">' . $viewall_forums[$myrow['forum_id']]->getVar('forum_name') . '</a>';
 			}
 			else
 			{
@@ -575,7 +606,7 @@ class IforumForumHandler extends ArtObjectHandler {
 
 	function getTopicCount(&$forum, $startdate, $type)
 	{
-		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.php';
+		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(dirname(__FILE__ ) ) ).'/include/functions.php';
 
 		$criteria_extra = '';
 		$criteria_approve = ' AND t.approved = 1'; // any others?
@@ -657,7 +688,7 @@ class IforumForumHandler extends ArtObjectHandler {
 	function getPermission($forum, $type = "access", $checkCategory = true)
 	{
 		static $_cachedPerms;
-		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.php';
+		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(dirname(__FILE__ ) ) ).'/include/functions.php';
 
 		if ($type == "all") return true;
 		if (iforum_isAdministrator()) return true;
@@ -666,7 +697,7 @@ class IforumForumHandler extends ArtObjectHandler {
 
 		if (!empty($checkCategory))
 		{
-			$category_handler = icms_getmodulehandler('category', basename(dirname(__FILE__, 2)), 'iforum' );
+			$category_handler = icms_getmodulehandler('category', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 			$categoryPerm = $category_handler->getPermission($forum->getVar('cat_id'));
 			if (!$categoryPerm) return false;
 		}
@@ -685,7 +716,7 @@ class IforumForumHandler extends ArtObjectHandler {
 			"forum_access";
 			if (!isset($_cachedPerms[$perm_type]))
 			{
-				$getpermission = icms_getmodulehandler('permission', basename(dirname(__FILE__, 2)), 'iforum' );
+				$getpermission = icms_getmodulehandler('permission', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 				$_cachedPerms[$perm_type] = $getpermission->getPermissions($perm_type);
 			}
 			$permission = (isset($_cachedPerms[$perm_type][$forum->getVar('forum_id')][$perm_item])) ? 1 :
@@ -696,13 +727,13 @@ class IforumForumHandler extends ArtObjectHandler {
 
 	function deletePermission(&$forum)
 	{
-		$perm_handler = icms_getmodulehandler('permission', basename(dirname(__FILE__, 2)), 'iforum' );
+		$perm_handler = icms_getmodulehandler('permission', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		return $perm_handler->deleteByForum($forum->getVar("forum_id"));
 	}
 
 	function applyPermissionTemplate(&$forum)
 	{
-		$perm_handler = icms_getmodulehandler('permission', basename(dirname(__FILE__, 2)), 'iforum' );
+		$perm_handler = icms_getmodulehandler('permission', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		return $perm_handler->applyTemplate($forum->getVar("forum_id"));
 	}
 
@@ -822,7 +853,7 @@ class IforumForumHandler extends ArtObjectHandler {
 	function &display(&$forums_obj)
 	{
 		global $icmsConfig, $forumImage, $myts;
-		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.php';
+		include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(dirname(__FILE__ ) ) ).'/include/functions.php';
 
 		$posts = array();
 		$posts_obj = array();
@@ -832,7 +863,7 @@ class IforumForumHandler extends ArtObjectHandler {
 		}
 		if (!empty($posts))
 		{
-			$post_handler = icms_getmodulehandler('post', basename(dirname(__FILE__, 2)), 'iforum' );
+			$post_handler = icms_getmodulehandler('post', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 			$posts_obj = $post_handler->getAll(new icms_db_criteria_Item("post_id", "(".implode(", ", $posts).")", "IN"), array("uid", "topic_id", "post_time", "subject", "poster_name", "icon"));
 		}
 
@@ -897,7 +928,7 @@ class IforumForumHandler extends ArtObjectHandler {
 			}
 			else
 			{
-				$_forum_data["forum_lastpost_user"] = icms_core_DataFilter::htmlSpecialchars(icms::$config->getConfig("anonymous"));
+				$_forum_data["forum_lastpost_user"] = icms_core_DataFilter::htmlSpecialchars($GLOBALS["icmsConfig"]["anonymous"]);
 			}
 
 			$_forum_data['forum_lastpost_time'] = formatTimestamp($post_obj->getVar('post_time'));

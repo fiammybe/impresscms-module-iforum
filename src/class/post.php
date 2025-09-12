@@ -28,38 +28,44 @@ if (!defined("ICMS_ROOT_PATH"))
 	exit();
 }
 
-defined("IFORUM_FUNCTIONS_INI") || include ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include/functions.ini.php';
-iforum_load_object();
-
-class Post extends ArtObject {
+/**
+ * Post object class for iForum
+ */
+class Post extends icms_ipf_Object {
 	public $attachment_array = array();
 
-	function __construct()
+	/**
+	 * Constructor
+	 *
+	 * @param object $handler IforumPostHandler object
+	 * @param array $data array of post data
+	 */
+	function __construct(&$handler, $data = array())
 	{
-        parent::__construct();
-
-		$this->initVar('post_id', XOBJ_DTYPE_INT);
+		$this->initVar('post_id', XOBJ_DTYPE_INT, null, false);
 		$this->initVar('topic_id', XOBJ_DTYPE_INT, 0, true);
 		$this->initVar('forum_id', XOBJ_DTYPE_INT, 0, true);
 		$this->initVar('post_time', XOBJ_DTYPE_INT, 0, true);
-		$this->initVar('poster_ip', XOBJ_DTYPE_INT, 0);
-		$this->initVar('poster_name', XOBJ_DTYPE_TXTBOX, "");
-		$this->initVar('subject', XOBJ_DTYPE_TXTBOX, "", true);
-		$this->initVar('pid', XOBJ_DTYPE_INT, 0);
-		$this->initVar('dohtml', XOBJ_DTYPE_INT, 0);
-		$this->initVar('dosmiley', XOBJ_DTYPE_INT, 1);
-		$this->initVar('doxcode', XOBJ_DTYPE_INT, 1);
-		$this->initVar('doimage', XOBJ_DTYPE_INT, 1);
-		$this->initVar('dobr', XOBJ_DTYPE_INT, 1);
-		$this->initVar('uid', XOBJ_DTYPE_INT, 1);
-		$this->initVar('icon', XOBJ_DTYPE_TXTBOX, "");
-		$this->initVar('attachsig', XOBJ_DTYPE_INT, 0);
-		$this->initVar('approved', XOBJ_DTYPE_INT, 1);
-		$this->initVar('post_karma', XOBJ_DTYPE_INT, 0);
-		$this->initVar('require_reply', XOBJ_DTYPE_INT, 0);
-		$this->initVar('attachment', XOBJ_DTYPE_TXTAREA, "");
-		$this->initVar('post_text', XOBJ_DTYPE_TXTAREA, "");
-		$this->initVar('post_edit', XOBJ_DTYPE_TXTAREA, "");
+		$this->initVar('poster_ip', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('poster_name', XOBJ_DTYPE_TXTBOX, "", false, 255);
+		$this->initVar('subject', XOBJ_DTYPE_TXTBOX, "", true, 255);
+		$this->initVar('pid', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('dohtml', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('dosmiley', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('doxcode', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('doimage', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('dobr', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('uid', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('icon', XOBJ_DTYPE_TXTBOX, "", false, 255);
+		$this->initVar('attachsig', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('approved', XOBJ_DTYPE_INT, 1, false);
+		$this->initVar('post_karma', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('require_reply', XOBJ_DTYPE_INT, 0, false);
+		$this->initVar('attachment', XOBJ_DTYPE_TXTAREA, "", false);
+		$this->initVar('post_text', XOBJ_DTYPE_TXTAREA, "", false);
+		$this->initVar('post_edit', XOBJ_DTYPE_TXTAREA, "", false);
+
+		parent::__construct($handler, $data);
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +79,7 @@ class Post extends ArtObject {
 		return $this->attachment_array;
 	}
 
-	public function incrementDownload($attach_key)
+	function incrementDownload($attach_key)
 	{
 		if (!$attach_key) return false;
 		$this->attachment_array[(string)$attach_key]['num_download'] ++;
@@ -223,6 +229,7 @@ class Post extends ArtObject {
 
 	function displayPostEdit()
 	{
+		global $myts;
 
 		if (empty(icms::$module->config['recordedit_timelimit']) ) return false;
 
@@ -235,8 +242,8 @@ class Post extends ArtObject {
 			foreach($post_edits as $postedit)
 			{
 				$edit_time = (int)$postedit['edit_time'];
-				$edit_user = icms_core_Textsanitizer::getInstance()->stripSlashesGPC($postedit['edit_user']);
-				$post_edit .= _MD_EDITEDBY . " " . $edit_user . " " . _MD_ON . " " . formatTimestamp((int)$edit_time) . "<br/>";
+				$edit_user = $myts->stripSlashesGPC($postedit['edit_user']);
+				$post_edit .= _MD_EDITEDBY . " " . $edit_user . " " . _MD_ON . " " . formatTimestamp(intval($edit_time)) . "<br/>";
 			}
 		}
 		return $post_edit;
@@ -245,11 +252,11 @@ class Post extends ArtObject {
 
 	function &getPostBody($imageAsSource = false)
 	{
-		global $icmsConfig;
+		global $icmsConfig, $myts;
 
 		$uid = is_object(icms::$user)? icms::$user->getVar('uid'):
 		0;
-		$karma_handler = icms_getmodulehandler('karma', basename(dirname(__FILE__, 2)), 'iforum' );
+		$karma_handler = icms_getmodulehandler('karma', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		$user_karma = $karma_handler->getUserKarma();
 
 		$post = array();
@@ -380,8 +387,10 @@ class Post extends ArtObject {
 		$poster = (($this->getVar('uid') > 0) && isset($viewtopic_users[$this->getVar('uid')]))? $viewtopic_users[$this->getVar('uid')]:
 		array(
 		'poster_uid' => 0,
-			'name' => $this->getVar('poster_name') ?: icms_core_DataFilter::htmlSpecialchars($icmsConfig['anonymous']),
-			'link' => $this->getVar('poster_name') ?: icms_core_DataFilter::htmlSpecialchars($icmsConfig['anonymous'])
+			'name' => $this->getVar('poster_name')?$this->getVar('poster_name'):
+		icms_core_DataFilter::htmlSpecialchars($icmsConfig['anonymous']),
+			'link' => $this->getVar('poster_name')?$this->getVar('poster_name'):
+		icms_core_DataFilter::htmlSpecialchars($icmsConfig['anonymous'])
 		);
 
 		$posticon = $this->getVar('icon');
@@ -398,7 +407,7 @@ class Post extends ArtObject {
 
 		$thread_buttons = array();
 
-		if (icms::$module->config['enable_permcheck'])
+		if ($GLOBALS["icmsModuleConfig"]['enable_permcheck'])
 		{
 			$topic_handler =icms_getmodulehandler('topic', basename(dirname(__DIR__) ), 'iforum' );
 			if ($topic_handler->getPermission($forum_id, $topic_status, "edit"))
@@ -511,10 +520,34 @@ class Post extends ArtObject {
 
 }
 
-class IforumPostHandler extends ArtObjectHandler {
+/**
+ * Post handler class for iForum
+ */
+class IforumPostHandler extends icms_ipf_Handler {
+
+	/**
+	 * Constructor
+	 *
+	 * @param object $db database connection object
+	 */
 	function __construct(&$db)
 	{
-		parent::__construct($db, 'bb_posts', 'Post', 'post_id', 'subject');
+		parent::__construct($db, 'post', 'post_id', 'Post');
+	}
+
+	/**
+	 * Create a new post object
+	 *
+	 * @param bool $isNew whether the object is new
+	 * @return Post new post object
+	 */
+	function &create($isNew = true)
+	{
+		$post = new Post($this);
+		if ($isNew) {
+			$post->setNew();
+		}
+		return $post;
 	}
 
 	function &get($id)
@@ -575,7 +608,7 @@ class IforumPostHandler extends ArtObjectHandler {
 		}
 		$post->setVar("approved", 1);
 		$this->insert($post, true);
-		$topic_handler = icms_getmodulehandler("topic", basename(dirname(__FILE__, 2)), 'iforum' );
+		$topic_handler = icms_getmodulehandler("topic", basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		$topic_obj = $topic_handler->get($post->getVar("topic_id"));
 		if ($topic_obj->getVar("topic_last_post_id") < $post->getVar("post_id"))
 		{
@@ -590,7 +623,7 @@ class IforumPostHandler extends ArtObjectHandler {
 			$topic_obj->setVar("topic_replies", $topic_obj->getVar("topic_replies")+1);
 		}
 		$topic_handler->insert($topic_obj, true);
-		$forum_handler = icms_getmodulehandler("forum", basename(dirname(__FILE__, 2)), 'iforum' );
+		$forum_handler = icms_getmodulehandler("forum", basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		$forum_obj = $forum_handler->get($post->getVar("forum_id"));
 		if ($forum_obj->getVar("forum_last_post_id") < $post->getVar("post_id"))
 		{
@@ -635,7 +668,7 @@ class IforumPostHandler extends ArtObjectHandler {
 	{
 		global $icmsConfig;
 
-		$topic_handler = icms_getmodulehandler("topic", basename(dirname(__FILE__, 2)), 'iforum' );
+		$topic_handler = icms_getmodulehandler("topic", basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		// Verify the topic ID
 		if ($topic_id = $post->getVar("topic_id"))
 		{
@@ -654,7 +687,7 @@ class IforumPostHandler extends ArtObjectHandler {
 			$post->setNew();
 			$topic_obj = $topic_handler->create();
 		}
-		$text_handler = icms_getmodulehandler("text", basename(dirname(__FILE__, 2)), 'iforum' );
+		$text_handler = icms_getmodulehandler("text", basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 		$post_text_vars = array("post_text", "post_edit");
 		if ($post->isNew())
 		{
@@ -822,7 +855,7 @@ class IforumPostHandler extends ArtObjectHandler {
 
 		if ($post->isTopic())
 		{
-			$topic_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 2)), 'iforum' );
+			$topic_handler = icms_getmodulehandler('topic', basename(dirname(dirname(__FILE__ ) ) ), 'iforum' );
 			$topic_obj = $topic_handler->get($post->getVar('topic_id'));
 			if (is_object($topic_obj) && $topic_obj->getVar("approved") > 0 && empty($force))
 			{
