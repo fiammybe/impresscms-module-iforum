@@ -155,7 +155,7 @@ if (count($posts) > 0) foreach (array_keys($posts) as $id)
 $icms_pagetitle = icms::$module->getVar('name'). ' - ' ._MD_VIEWALLPOSTS;
 $xoopsOption['xoops_pagetitle'] = $icms_pagetitle;
 $xoopsOption['xoops_module_header'] = $icms_module_header;
-$xoopsOption['template_main'] = 'iforum_viewpost.html';
+$xoopsOption['template_main'] = 'iforum_viewpost.html.tpl';
 include ICMS_ROOT_PATH."/header.php";
 if ($icmsTpl->compile_check && is_dir(XOOPS_THEME_PATH."/".$icmsConfig['theme_set']."/templates/".icms::$module->getVar("dirname")))
 {

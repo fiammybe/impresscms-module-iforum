@@ -79,7 +79,7 @@ if (!empty(icms::$module->config['rss_enable']))
 		';
 }
 
-$xoopsOption['template_main'] = 'iforum_index.html';
+$xoopsOption['template_main'] = 'iforum_index.html.tpl';
 $xoopsOption['xoops_pagetitle'] = $icms_pagetitle;
 $xoopsOption['xoops_module_header'] = $icms_module_header;
 include ICMS_ROOT_PATH."/header.php";

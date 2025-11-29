@@ -107,43 +107,43 @@ $modversion['onUpdate'] = 'include/module.php';
 //$modversion['css'] = 'templates/iforum.css';
 
 // Templates
-$modversion['templates'][0]['file'] = 'iforum_poll_results.html';
+$modversion['templates'][0]['file'] = 'iforum_poll_results.html.tpl';
 $modversion['templates'][0]['description'] = '';
-$modversion['templates'][1]['file'] = 'iforum_index.html';
+$modversion['templates'][1]['file'] = 'iforum_index.html.tpl';
 $modversion['templates'][1]['description'] = '';
-$modversion['templates'][2]['file'] = 'iforum_searchresults.html';
+$modversion['templates'][2]['file'] = 'iforum_searchresults.html.tpl';
 $modversion['templates'][2]['description'] = '';
-$modversion['templates'][3]['file'] = 'iforum_search.html';
+$modversion['templates'][3]['file'] = 'iforum_search.html.tpl';
 $modversion['templates'][3]['description'] = '';
-$modversion['templates'][4]['file'] = 'iforum_thread.html';
+$modversion['templates'][4]['file'] = 'iforum_thread.html.tpl';
 $modversion['templates'][4]['description'] = '';
-$modversion['templates'][5]['file'] = 'iforum_viewforum.html';
+$modversion['templates'][5]['file'] = 'iforum_viewforum.html.tpl';
 $modversion['templates'][5]['description'] = '';
-$modversion['templates'][6]['file'] = 'iforum_viewtopic_flat.html';
+$modversion['templates'][6]['file'] = 'iforum_viewtopic_flat.html.tpl';
 $modversion['templates'][6]['description'] = '';
-$modversion['templates'][7]['file'] = 'iforum_viewtopic_thread.html';
+$modversion['templates'][7]['file'] = 'iforum_viewtopic_thread.html.tpl';
 $modversion['templates'][7]['description'] = '';
-$modversion['templates'][8]['file'] = 'iforum_rss.html';
+$modversion['templates'][8]['file'] = 'iforum_rss.html.tpl';
 $modversion['templates'][8]['description'] = '';
-$modversion['templates'][9]['file'] = 'iforum_viewall.html';
+$modversion['templates'][9]['file'] = 'iforum_viewall.html.tpl';
 $modversion['templates'][9]['description'] = '';
-$modversion['templates'][10]['file'] = 'iforum_poll_view.html';
+$modversion['templates'][10]['file'] = 'iforum_poll_view.html.tpl';
 $modversion['templates'][10]['description'] = '';
-$modversion['templates'][11]['file'] = 'iforum_online.html';
+$modversion['templates'][11]['file'] = 'iforum_online.html.tpl';
 $modversion['templates'][11]['description'] = '';
-$modversion['templates'][12]['file'] = 'iforum_viewpost.html';
+$modversion['templates'][12]['file'] = 'iforum_viewpost.html.tpl';
 $modversion['templates'][12]['description'] = '';
-$modversion['templates'][13]['file'] = 'iforum_item.html';
+$modversion['templates'][13]['file'] = 'iforum_item.html.tpl';
 $modversion['templates'][13]['description'] = '';
-$modversion['templates'][14]['file'] = 'iforum_left.html';
+$modversion['templates'][14]['file'] = 'iforum_left.html.tpl';
 $modversion['templates'][14]['description'] = '';
-$modversion['templates'][15]['file'] = 'iforum_right.html';
+$modversion['templates'][15]['file'] = 'iforum_right.html.tpl';
 $modversion['templates'][15]['description'] = '';
-$modversion['templates'][16]['file'] = 'iforum_viewtopic_left.html';
+$modversion['templates'][16]['file'] = 'iforum_viewtopic_left.html.tpl';
 $modversion['templates'][16]['description'] = '';
-$modversion['templates'][17]['file'] = 'iforum_viewtopic_right.html';
+$modversion['templates'][17]['file'] = 'iforum_viewtopic_right.html.tpl';
 $modversion['templates'][17]['description'] = '';
-//$modversion['templates'][18]['file'] = 'iforum_viewpost_list.html';
+//$modversion['templates'][18]['file'] = 'iforum_viewpost_list.html.tpl';
 //$modversion['templates'][18]['description'] = '';
 
 
@@ -163,7 +163,7 @@ $modversion['blocks'][1] = array(
 	'show_func' => "b_iforum_show",
 	'options' => "time|5|360|0|1|0",
 	'edit_func' => "b_iforum_edit",
-	'template' => 'iforum_block.html');
+	'template' => 'iforum_block.html.tpl');
 
 // options[0] - Citeria valid: time(by default), views, replies, digest, sticky
 // options[1] - NumberToDisplay: any positive integer
@@ -180,7 +180,7 @@ $modversion['blocks'][] = array(
 	'show_func' => "b_iforum_topic_show",
 	'options' => "time|5|360|0|1|0|0",
 	'edit_func' => "b_iforum_topic_edit",
-	'template' => 'iforum_block_topic.html');
+	'template' => 'iforum_block_topic.html.tpl');
 
 
 // options[0] - Citeria valid: title(by default), text
@@ -198,7 +198,7 @@ $modversion['blocks'][] = array(
 	'show_func' => "b_iforum_post_show",
 	'options' => "title|10|360|0|1|0|0",
 	'edit_func' => "b_iforum_post_edit",
-	'template' => 'iforum_block_post.html');
+	'template' => 'iforum_block_post.html.tpl');
 
 // options[0] - Citeria valid: post(by default), topic, digest, sticky
 // options[1] - NumberToDisplay: any positive integer
@@ -214,7 +214,7 @@ $modversion['blocks'][] = array(
 	'show_func' => "b_iforum_author_show",
 	'options' => "topic|5|360|0|1|0",
 	'edit_func' => "b_iforum_author_edit",
-	'template' => 'iforum_block_author.html');
+	'template' => 'iforum_block_author.html.tpl');
 
 // Search
 $modversion['hasSearch'] = 1;

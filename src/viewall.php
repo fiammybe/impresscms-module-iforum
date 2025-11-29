@@ -46,7 +46,7 @@ if (!empty(icms::$module->config['rss_enable']))
 	$icms_module_header .= '<link rel="alternate" type="application/rss+xml" title="'.icms::$module->getVar('name').'" href="'.ICMS_URL.'/modules/'.icms::$module->getVar('dirname').'/rss.php" />';
 }
 $xoopsOption['xoops_module_header'] = $icms_module_header;
-$xoopsOption['template_main'] = 'iforum_viewall.html';
+$xoopsOption['template_main'] = 'iforum_viewall.html.tpl';
 include ICMS_ROOT_PATH."/header.php";
 $icmsTpl->assign('xoops_module_header', $icms_module_header);
 

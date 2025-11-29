@@ -88,7 +88,7 @@ $tpl->xoops_setCacheTime(icms::$module->config['rss_cachetime'] * 60);
 
 $compile_id = implode(",", $valid_forums);
 $xoopsCachedTemplateId = 'mod_'.icms::$module->getVar('dirname').'|'.md5(str_replace(ICMS_URL, '', $GLOBALS['xoopsRequestUri']));
-if (!$tpl->is_cached('db:iforum_rss.html', $xoopsCachedTemplateId, $compile_id))
+if (!$tpl->is_cached('db:iforum_rss.html.tpl', $xoopsCachedTemplateId, $compile_id))
 {
 
 	$xmlrss_handler = icms_getmodulehandler('xmlrss', basename(__DIR__), 'iforum' );
@@ -205,4 +205,4 @@ if (!$tpl->is_cached('db:iforum_rss.html', $xoopsCachedTemplateId, $compile_id))
 	$tpl->assign('rss', $rss_feed);
 	unset($rss);
 }
-$tpl->display('db:iforum_rss.html', $xoopsCachedTemplateId, $compile_id);
+$tpl->display('db:iforum_rss.html.tpl', $xoopsCachedTemplateId, $compile_id);

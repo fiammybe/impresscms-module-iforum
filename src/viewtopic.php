@@ -137,7 +137,7 @@ $total_posts = $topic_handler->getPostCount($forumtopic, $type);
 
 if ($viewmode == "thread")
 {
-	$xoopsOption['template_main'] = 'iforum_viewtopic_thread.html';
+	$xoopsOption['template_main'] = 'iforum_viewtopic_thread.html.tpl';
 	if (!empty(icms::$module->config["posts_for_thread"]) && $total_posts > icms::$module->config["posts_for_thread"])
 	{
 		redirect_header("viewtopic.php?topic_id=$topic_id&amp;viewmode=flat", 2, _MD_EXCEEDTHREADVIEW);
@@ -147,17 +147,17 @@ if ($viewmode == "thread")
 }
 elseif ($viewmode == "left")
 {
-	$xoopsOption['template_main'] = 'iforum_viewtopic_left.html';
+	$xoopsOption['template_main'] = 'iforum_viewtopic_left.html.tpl';
 	$postsArray = $topic_handler->getAllPosts($forumtopic, $order, icms::$module->config['posts_per_page'], $start, $post_id, $type);
 }
 elseif ($viewmode == "right")
 {
-	$xoopsOption['template_main'] = 'iforum_viewtopic_right.html';
+	$xoopsOption['template_main'] = 'iforum_viewtopic_right.html.tpl';
 	$postsArray = $topic_handler->getAllPosts($forumtopic, $order, icms::$module->config['posts_per_page'], $start, $post_id, $type);
 }
 else
 {
-	$xoopsOption['template_main'] = 'iforum_viewtopic_flat.html';
+	$xoopsOption['template_main'] = 'iforum_viewtopic_flat.html.tpl';
 	$postsArray = $topic_handler->getAllPosts($forumtopic, $order, icms::$module->config['posts_per_page'], $start, $post_id, $type);
 }
 

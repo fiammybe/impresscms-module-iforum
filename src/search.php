@@ -33,7 +33,7 @@ if ($icmsConfigSearch['enable_search'] != 1)
 }
  
 $icmsConfig['module_cache'][icms::$module->getVar('mid')] = 0;
-$xoopsOption['template_main'] = 'iforum_search.html';
+$xoopsOption['template_main'] = 'iforum_search.html.tpl';
 include ICMS_ROOT_PATH.'/header.php';
  
 include_once ICMS_ROOT_PATH.'/modules/'.basename(__DIR__).'/include/search.inc.php';
