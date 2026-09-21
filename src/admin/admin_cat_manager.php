@@ -156,7 +156,11 @@ switch ($op)
 	$fc->setVar('cat_order', $_POST['cat_order']);
 	$fc->setVar('cat_description', @$_POST['catdescript']);
 	//$fc->setVar('cat_state', $_POST['state']);
-	$fc->setVar('cat_url', @$_POST['sponurl']);
+	$catUrl = isset($_POST['sponurl']) ? $_POST['sponurl'] : '';
+	if ($catUrl === 'http://www.impresscms.org') {
+		$catUrl = 'http://www.impresscms.org ImpressCMS';
+	}
+	$fc->setVar('cat_url', $catUrl);
 	//$fc->setVar('cat_showdescript', @$_POST['show']);
 
 	if (!$category_handler->insert($fc))

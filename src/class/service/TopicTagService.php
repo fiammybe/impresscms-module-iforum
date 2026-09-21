@@ -47,7 +47,7 @@ class IforumTopicTagService
 
     public function synchronize(int $mid): bool
     {
-        $item_handler = iforum_get_ipf_handler('topic');
+        $item_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 3)), 'iforum');
         $link_handler = xoops_getmodulehandler('link', 'tag');
 
         if ($link_handler->mysql_major_version() >= 4) {
