@@ -10,10 +10,13 @@ class IforumForumForm
         include_once ICMS_ROOT_PATH . '/class/xoopstree.php';
 
         $isNew = !$forum || $forum->isNew();
+        $currentParentForum = (int)($forum ? $forum->getVar('parent_forum') : 0);
+
         if ($isNew) {
             $forumHandler = $forumHandler ?: icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
             $forum = $forumHandler->create();
-            $forum->setVar('parent_forum', $parentForum);
+            $currentParentForum = $parentForum;
+            $forum->setVar('parent_forum', $currentParentForum);
             $forum->setVar('forum_order', 0);
             $forum->setVar('forum_name', '');
             $forum->setVar('forum_desc', '');
@@ -39,7 +42,7 @@ class IforumForumForm
         $form->addElement(new icms_form_elements_Dhtmltextarea(_AM_IFORUM_FORUMDESCRIPTION, 'forum_desc', $forum->getVar('forum_desc', 'E'), 10, 60), false);
         $form->addElement(new icms_form_elements_Hidden('parent_forum', $forum->getVar('parent_forum')));
 
-        if ($parentForum === 0) {
+        if ($currentParentForum === 0) {
             $selectedCategory = (int)$forum->getVar('cat_id');
             if ($isNew && isset($_GET['cat_id'])) {
                 $selectedCategory = (int)$_GET['cat_id'];
@@ -48,7 +51,8 @@ class IforumForumForm
             $mytree->makeMySelBox('cat_title', 'cat_id', $selectedCategory);
             $form->addElement(new icms_form_elements_Label(_AM_IFORUM_CATEGORY, ob_get_clean()));
         } else {
-            $pf = $forumHandler->get($parentForum);
+            $forumHandler = $forumHandler ?: icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
+            $pf = $forumHandler->get($currentParentForum);
             $form->addElement(new icms_form_elements_Hidden('cat_id', $pf->getVar('cat_id')));
         }
 

@@ -17,7 +17,7 @@ class IforumTopic extends IforumPersistableObject
         $this->quickInitVar('topic_last_post_id', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('forum_id', XOBJ_DTYPE_INT, true, '');
         $this->quickInitVar('topic_status', XOBJ_DTYPE_INT, false, '');
-        $this->quickInitVar('topic_subject', XOBJ_DTYPE_INT, false, '');
+        $this->quickInitVar('topic_subject', XOBJ_DTYPE_TXTBOX, false, '');
         $this->quickInitVar('topic_sticky', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('topic_digest', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('digest_time', XOBJ_DTYPE_INT, false, '');

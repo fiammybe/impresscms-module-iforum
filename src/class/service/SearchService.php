@@ -5,6 +5,15 @@ defined('ICMS_ROOT_PATH') or exit();
 
 class IforumSearchService
 {
+    private const ALLOWED_SORTS = array(
+        'p.post_time desc',
+        't.topic_title',
+        't.topic_views',
+        't.topic_replies',
+        'f.forum_name',
+        'u.uname',
+    );
+
     public function search($queryarray, $andor, $limit, $offset, $userid, $forums = 0, $sortby = 0, string $searchin = 'both', string $subquery = ''): array
     {
         global $icmsConfig, $myts;
@@ -13,7 +22,9 @@ class IforumSearchService
         $uid = (is_object(icms::$user) && icms::$user->isactive()) ? icms::$user->getVar('uid') : 0;
 
         if (is_array($forums) && count($forums) > 0) {
-            $forumScope = 'list:' . implode(',', array_map('intval', $forums));
+            $forums = array_map('intval', $forums);
+            sort($forums);
+            $forumScope = 'list:' . implode(',', $forums);
         } elseif (is_numeric($forums) && $forums > 0) {
             $forumScope = 'single:' . (int)$forums;
         } else {
@@ -23,7 +34,6 @@ class IforumSearchService
         if (!isset($allowedForums[$uid][$forumScope])) {
             $forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
             if (is_array($forums) && count($forums) > 0) {
-                $forums = array_map('intval', $forums);
                 foreach ($forums as $forumid) {
                     $_forum = $forum_handler->get($forumid);
                     if ($forum_handler->getPermission($_forum)) {
@@ -71,38 +81,35 @@ class IforumSearchService
         if ($count > 0) {
             switch ($searchin) {
                 case 'title':
-                    $sql .= " AND ((p.subject LIKE '%$queryarray[0]%')";
+                    $sql .= ' AND ((' . $this->buildLikeClause('p.subject', $queryarray[0]) . ')';
                     break;
                 case 'text':
-                    $sql .= " AND ((pt.post_text LIKE '%$queryarray[0]%')";
+                    $sql .= ' AND ((' . $this->buildLikeClause('pt.post_text', $queryarray[0]) . ')';
                     break;
                 case 'both':
                 default:
-                    $sql .= " AND ((p.subject LIKE '%$queryarray[0]%' OR pt.post_text LIKE '%$queryarray[0]%')";
+                    $sql .= ' AND ((' . $this->buildLikeClause('p.subject', $queryarray[0]) . ' OR ' . $this->buildLikeClause('pt.post_text', $queryarray[0]) . ')';
                     break;
             }
             for ($i = 1; $i < $count; $i++) {
                 $sql .= ' ' . $andor . ' ';
                 switch ($searchin) {
                     case 'title':
-                        $sql .= "(p.subject LIKE '%$queryarray[$i]%')";
+                        $sql .= '(' . $this->buildLikeClause('p.subject', $queryarray[$i]) . ')';
                         break;
                     case 'text':
-                        $sql .= "(pt.post_text LIKE '%$queryarray[$i]%')";
+                        $sql .= '(' . $this->buildLikeClause('pt.post_text', $queryarray[$i]) . ')';
                         break;
                     case 'both':
                     default:
-                        $sql .= "(p.subject LIKE '%$queryarray[$i]%' OR pt.post_text LIKE '%$queryarray[$i]%')";
+                        $sql .= '(' . $this->buildLikeClause('p.subject', $queryarray[$i]) . ' OR ' . $this->buildLikeClause('pt.post_text', $queryarray[$i]) . ')';
                         break;
                 }
             }
             $sql .= ') ';
         }
 
-        if (!$sortby) {
-            $sortby = 'p.post_time DESC';
-        }
-        $sql .= $subquery . ' ORDER BY ' . $sortby;
+        $sql .= $this->normalizeSubquery($subquery) . ' ORDER BY ' . $this->normalizeSortby($sortby);
 
         $result = icms::$xoopsDB->query($sql, $limit, $offset);
         $ret = array();
@@ -154,5 +161,34 @@ class IforumSearchService
         }
 
         return $ret;
+    }
+
+    private function buildLikeClause(string $column, string $term): string
+    {
+        return $column . ' LIKE ' . icms::$xoopsDB->quoteString('%' . $term . '%');
+    }
+
+    private function normalizeSortby($sortby): string
+    {
+        $sortby = is_string($sortby) ? trim($sortby) : '';
+        if ($sortby === '' || !in_array(strtolower($sortby), self::ALLOWED_SORTS, true)) {
+            return 'p.post_time DESC';
+        }
+
+        return $sortby;
+    }
+
+    private function normalizeSubquery(string $subquery): string
+    {
+        $subquery = trim($subquery);
+        if ($subquery === '') {
+            return '';
+        }
+
+        if (preg_match('/^AND\s+p\.post_time\s+>=\s+\d+$/i', $subquery)) {
+            return ' ' . $subquery;
+        }
+
+        return '';
     }
 }
