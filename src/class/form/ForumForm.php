@@ -40,8 +40,12 @@ class IforumForumForm
         $form->addElement(new icms_form_elements_Hidden('parent_forum', $forum->getVar('parent_forum')));
 
         if ($parentForum === 0) {
+            $selectedCategory = (int)$forum->getVar('cat_id');
+            if ($isNew && isset($_GET['cat_id'])) {
+                $selectedCategory = (int)$_GET['cat_id'];
+            }
             ob_start();
-            $mytree->makeMySelBox('cat_title', 'cat_id', $forum->getVar('cat_id'));
+            $mytree->makeMySelBox('cat_title', 'cat_id', $selectedCategory);
             $form->addElement(new icms_form_elements_Label(_AM_IFORUM_CATEGORY, ob_get_clean()));
         } else {
             $pf = $forumHandler->get($parentForum);

@@ -15,7 +15,7 @@ class IforumPostPersistableObject extends IforumPersistableObject
         $this->quickInitVar('post_time', XOBJ_DTYPE_INT, true, '');
         $this->quickInitVar('uid', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('poster_name', XOBJ_DTYPE_TXTBOX, false, '');
-        $this->quickInitVar('poster_ip', XOBJ_DTYPE_INT, false, '');
+        $this->quickInitVar('poster_ip', XOBJ_DTYPE_TXTBOX, false, '');
         $this->quickInitVar('subject', XOBJ_DTYPE_TXTBOX, true, '');
         $this->quickInitVar('dohtml', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('dosmiley', XOBJ_DTYPE_INT, false, '');

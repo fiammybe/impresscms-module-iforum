@@ -63,7 +63,6 @@ class IforumTopicTagService
                 . ' AND ( aa.' . $item_handler->keyName . ' IS NULL OR aa.approved < 1 )';
         }
 
-        $link_handler->db->queryF($sql);
-        return true;
+        return (bool)$link_handler->db->queryF($sql);
     }
 }

@@ -11,7 +11,7 @@ class IforumReportPersistableObject extends IforumPersistableObject
         $this->quickInitVar('report_id', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('post_id', XOBJ_DTYPE_INT, true, '');
         $this->quickInitVar('reporter_uid', XOBJ_DTYPE_INT, false, '');
-        $this->quickInitVar('reporter_ip', XOBJ_DTYPE_INT, false, '');
+        $this->quickInitVar('reporter_ip', XOBJ_DTYPE_TXTBOX, false, '');
         $this->quickInitVar('report_time', XOBJ_DTYPE_INT, false, '');
         $this->quickInitVar('report_text', XOBJ_DTYPE_TXTBOX, true, '');
         $this->quickInitVar('report_result', XOBJ_DTYPE_INT, false, '');

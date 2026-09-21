@@ -12,33 +12,41 @@ class IforumSearchService
 
         $uid = (is_object(icms::$user) && icms::$user->isactive()) ? icms::$user->getVar('uid') : 0;
 
-        if (!isset($allowedForums[$uid])) {
+        if (is_array($forums) && count($forums) > 0) {
+            $forumScope = 'list:' . implode(',', array_map('intval', $forums));
+        } elseif (is_numeric($forums) && $forums > 0) {
+            $forumScope = 'single:' . (int)$forums;
+        } else {
+            $forumScope = 'all';
+        }
+
+        if (!isset($allowedForums[$uid][$forumScope])) {
             $forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
             if (is_array($forums) && count($forums) > 0) {
                 $forums = array_map('intval', $forums);
                 foreach ($forums as $forumid) {
                     $_forum = $forum_handler->get($forumid);
                     if ($forum_handler->getPermission($_forum)) {
-                        $allowedForums[$uid][$forumid] = $_forum;
+                        $allowedForums[$uid][$forumScope][$forumid] = $_forum;
                     }
                 }
             } elseif (is_numeric($forums) && $forums > 0) {
                 $forumid = (int)$forums;
                 $_forum = $forum_handler->get($forumid);
                 if ($forum_handler->getPermission($_forum)) {
-                    $allowedForums[$uid][$forumid] = $_forum;
+                    $allowedForums[$uid][$forumScope][$forumid] = $_forum;
                 }
             } else {
                 $forums = $forum_handler->getForums();
                 foreach ($forums as $forumid => $_forum) {
                     if ($forum_handler->getPermission($_forum)) {
-                        $allowedForums[$uid][$forumid] = $_forum;
+                        $allowedForums[$uid][$forumScope][$forumid] = $_forum;
                     }
                 }
             }
         }
 
-        $forum = implode(',', array_keys($allowedForums[$uid]));
+        $forum = implode(',', array_keys($allowedForums[$uid][$forumScope]));
         $sql = 'SELECT p.uid,f.forum_id, p.topic_id, p.poster_name, p.post_time,'
             . ' f.forum_name, p.post_id, p.subject'
             . ' FROM ' . icms::$xoopsDB->prefix('bb_posts') . ' p,'
