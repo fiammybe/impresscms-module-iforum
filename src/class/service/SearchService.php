@@ -172,7 +172,25 @@ class IforumSearchService
             return 'p.post_time DESC';
         }
 
-        if (preg_match('/^(?:p|pt|f|t|u)\.[a-z_]+(?:\s+(?:ASC|DESC))?$/i', $sortby)) {
+        if (preg_match('/^([a-z_]+)(?:\s+(ASC|DESC))?$/i', $sortby, $matches)) {
+            $columnMap = array(
+                'post_time' => 'p.post_time',
+                'subject' => 'p.subject',
+                'poster_name' => 'p.poster_name',
+                'post_text' => 'pt.post_text',
+                'forum_name' => 'f.forum_name',
+                'topic_title' => 't.topic_title',
+                'topic_views' => 't.topic_views',
+                'topic_replies' => 't.topic_replies',
+                'uname' => 'u.uname',
+            );
+            $column = strtolower($matches[1]);
+            if (isset($columnMap[$column])) {
+                return $columnMap[$column] . (empty($matches[2]) ? '' : ' ' . strtoupper($matches[2]));
+            }
+        }
+
+        if (preg_match('/^(?:[a-z_]+\.)?[a-z_]+(?:\s+(?:ASC|DESC))?$/i', $sortby)) {
             return $sortby;
         }
 
@@ -186,7 +204,9 @@ class IforumSearchService
             return '';
         }
 
-        if (preg_match('/^(?:(?:AND|OR)\s+\(*\s*(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|"[^"]*"|NULL)|IS\s+NOT\s+NULL|IS\s+NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*\)*\s*)+$/i', $subquery)) {
+        if (!preg_match('/[;\x00]/', $subquery)
+            && !preg_match('/--|\/\*|\*\//', $subquery)
+            && preg_match('/^[\s\w\.\(\),\'"%<>=!+-]+$/', $subquery)) {
             return ' ' . $subquery;
         }
 

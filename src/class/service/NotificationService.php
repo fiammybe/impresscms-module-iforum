@@ -19,7 +19,7 @@ class IforumNotificationService
             $sql = 'SELECT forum_name FROM ' . icms::$xoopsDB->prefix('bb_forums') . ' WHERE forum_id = ' . $item_id;
             $result = icms::$xoopsDB->query($sql);
             if (!$result) {
-                return array('name' => '', 'url' => '');
+                $this->handleQueryFailure(_MD_ERRORFORUM);
             }
             $result_array = icms::$xoopsDB->fetchArray($result);
             if (!$result_array) {
@@ -35,7 +35,7 @@ class IforumNotificationService
             $sql = 'SELECT t.topic_title,f.forum_id FROM ' . icms::$xoopsDB->prefix('bb_topics') . ' t, ' . icms::$xoopsDB->prefix('bb_forums') . ' f WHERE t.forum_id = f.forum_id AND t.topic_id = ' . $item_id . ' limit 1';
             $result = icms::$xoopsDB->query($sql);
             if (!$result) {
-                return array('name' => '', 'url' => '');
+                $this->handleQueryFailure(_MD_ERROROCCURED);
             }
             $result_array = icms::$xoopsDB->fetchArray($result);
             if (!$result_array) {
@@ -51,7 +51,7 @@ class IforumNotificationService
             $sql = 'SELECT subject,topic_id,forum_id FROM ' . icms::$xoopsDB->prefix('bb_posts') . ' WHERE post_id = ' . $item_id . ' LIMIT 1';
             $result = icms::$xoopsDB->query($sql);
             if (!$result) {
-                return array('name' => '', 'url' => '');
+                $this->handleQueryFailure(_MD_ERROROCCURED);
             }
             $result_array = icms::$xoopsDB->fetchArray($result);
             if (!$result_array) {
@@ -64,5 +64,11 @@ class IforumNotificationService
         }
 
         return array('name' => '', 'url' => '');
+    }
+
+    private function handleQueryFailure(string $message): void
+    {
+        redirect_header('index.php', 2, $message);
+        exit();
     }
 }

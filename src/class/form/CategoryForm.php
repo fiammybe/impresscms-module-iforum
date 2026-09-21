@@ -15,7 +15,7 @@ class IforumCategoryForm
             $category->setVar('cat_image', 'blank.gif');
             $category->setVar('cat_description', '');
             $category->setVar('cat_order', 0);
-            $category->setVar('cat_url', 'http://www.impresscms.org ImpressCMS');
+            $category->setVar('cat_url', 'http://www.impresscms.org');
         }
 
         $form->addElement(new icms_form_elements_Text(_AM_IFORUM_SETCATEGORYORDER, 'cat_order', 5, 10, $category->getVar('cat_order')), false);
@@ -45,9 +45,9 @@ class IforumCategoryForm
         $butt_save->setExtra("onclick=\"this.form.elements.op.value='save'\"");
         $button_tray->addElement($butt_save);
         if ($catId) {
-            $butt_delete = new icms_form_elements_Button('', '', _CANCEL, 'submit');
-            $butt_delete->setExtra("onclick=\"this.form.elements.op.value='default'\"");
-            $button_tray->addElement($butt_delete);
+            $butt_cancel = new icms_form_elements_Button('', '', _CANCEL, 'submit');
+            $butt_cancel->setExtra("onclick=\"this.form.elements.op.value='default'\"");
+            $button_tray->addElement($butt_cancel);
         }
         $form->addElement($button_tray);
 
