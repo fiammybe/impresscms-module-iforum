@@ -172,26 +172,31 @@ class IforumSearchService
             return 'p.post_time DESC';
         }
 
-        if (preg_match('/^([a-z_]+)(?:\s+(ASC|DESC))?$/i', $sortby, $matches)) {
-            $columnMap = array(
-                'post_time' => 'p.post_time',
-                'subject' => 'p.subject',
-                'poster_name' => 'p.poster_name',
-                'post_text' => 'pt.post_text',
-                'forum_name' => 'f.forum_name',
-                'topic_title' => 't.topic_title',
-                'topic_views' => 't.topic_views',
-                'topic_replies' => 't.topic_replies',
-                'uname' => 'u.uname',
-            );
-            $column = strtolower($matches[1]);
-            if (isset($columnMap[$column])) {
-                return $columnMap[$column] . (empty($matches[2]) ? '' : ' ' . strtoupper($matches[2]));
-            }
-        }
-
-        if (preg_match('/^(?:[a-z_]+\.)?[a-z_]+(?:\s+(?:ASC|DESC))?$/i', $sortby)) {
-            return $sortby;
+        $normalized = strtolower($sortby);
+        $allowedSorts = array(
+            'p.post_time desc' => 'p.post_time DESC',
+            'post_time desc' => 'p.post_time DESC',
+            'p.post_time' => 'p.post_time',
+            'post_time' => 'p.post_time',
+            'p.subject' => 'p.subject',
+            'subject' => 'p.subject',
+            'p.poster_name' => 'p.poster_name',
+            'poster_name' => 'p.poster_name',
+            'pt.post_text' => 'pt.post_text',
+            'post_text' => 'pt.post_text',
+            'f.forum_name' => 'f.forum_name',
+            'forum_name' => 'f.forum_name',
+            't.topic_title' => 't.topic_title',
+            'topic_title' => 't.topic_title',
+            't.topic_views' => 't.topic_views',
+            'topic_views' => 't.topic_views',
+            't.topic_replies' => 't.topic_replies',
+            'topic_replies' => 't.topic_replies',
+            'u.uname' => 'u.uname',
+            'uname' => 'u.uname',
+        );
+        if (isset($allowedSorts[$normalized])) {
+            return $allowedSorts[$normalized];
         }
 
         return 'p.post_time DESC';
