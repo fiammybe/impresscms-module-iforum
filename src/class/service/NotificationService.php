@@ -59,7 +59,7 @@ class IforumNotificationService
             }
             return array(
                 'name' => $result_array['subject'],
-                'url' => ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewtopic.php?forum=' . $result_array['forum_id'] . '&amp;topic_id=' . $result_array['topic_id'] . '#forumpost' . $item_id,
+                'url' => ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewtopic.php?forum=' . $result_array['forum_id'] . '&topic_id=' . $result_array['topic_id'] . '#forumpost' . $item_id,
             );
         }
 

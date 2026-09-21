@@ -23,6 +23,7 @@ class IforumSearchService
         }
 
         if (!isset($allowedForums[$uid][$forumScope])) {
+            $allowedForums[$uid][$forumScope] = array();
             $forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
             if (is_array($forums) && count($forums) > 0) {
                 foreach ($forums as $forumid) {
