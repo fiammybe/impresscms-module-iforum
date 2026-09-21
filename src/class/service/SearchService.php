@@ -5,19 +5,9 @@ defined('ICMS_ROOT_PATH') or exit();
 
 class IforumSearchService
 {
-    private const ALLOWED_SORTS = array(
-        'p.post_time desc',
-        'p.subject',
-        't.topic_title',
-        't.topic_views',
-        't.topic_replies',
-        'f.forum_name',
-        'u.uname',
-    );
-
     public function search($queryarray, $andor, $limit, $offset, $userid, $forums = 0, $sortby = 0, string $searchin = 'both', string $subquery = ''): array
     {
-        global $icmsConfig, $myts;
+        global $icmsConfig;
         static $allowedForums = array(), $iforumConfig;
 
         $uid = (is_object(icms::$user) && icms::$user->isactive()) ? icms::$user->getVar('uid') : 0;
@@ -174,11 +164,15 @@ class IforumSearchService
     private function normalizeSortby($sortby): string
     {
         $sortby = is_string($sortby) ? trim($sortby) : '';
-        if ($sortby === '' || !in_array(strtolower($sortby), self::ALLOWED_SORTS, true)) {
+        if ($sortby === '') {
             return 'p.post_time DESC';
         }
 
-        return $sortby;
+        if (preg_match('/^(?:p|pt|f|t|u)\.[a-z_]+(?:\s+(?:ASC|DESC))?$/i', $sortby)) {
+            return $sortby;
+        }
+
+        return 'p.post_time DESC';
     }
 
     private function normalizeSubquery(string $subquery): string
@@ -188,7 +182,7 @@ class IforumSearchService
             return '';
         }
 
-        if (preg_match('/^(?:(?:AND|OR)\s+(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|NULL)|IS\s+NOT\s+NULL|IS\s+NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*)+$/i', $subquery)) {
+        if (preg_match('/^(?:(?:AND|OR)\s+\(*\s*(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|NULL)|IS\s+NOT\s+NULL|IS\s+NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*\)*\s*)+$/i', $subquery)) {
             return ' ' . $subquery;
         }
 

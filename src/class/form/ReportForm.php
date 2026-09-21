@@ -19,8 +19,14 @@ class IforumReportForm
         $button_tray = new icms_form_elements_Tray('', '');
         $submit_button = new icms_form_elements_Button('', 'submit', _SUBMIT, 'submit');
         $cancel_button = new icms_form_elements_Button('', 'cancel', _MD_CANCELPOST, 'button');
-        $extra = 'viewtopic.php?forum=' . $forumId . '&amp;topic_id=' . $topicId . '&amp;post_id=' . $postId . '&amp;order=' . $order . '&amp;viewmode=' . $viewmode;
-        $cancel_button->setExtra("onclick='location=\"" . $extra . "\"'");
+        $extra = 'viewtopic.php?' . http_build_query(array(
+            'forum' => $forumId,
+            'topic_id' => $topicId,
+            'post_id' => $postId,
+            'order' => $order,
+            'viewmode' => $viewmode,
+        ));
+        $cancel_button->setExtra('onclick="location.href=' . htmlspecialchars(json_encode($extra), ENT_QUOTES) . '"');
         $button_tray->addElement($submit_button);
         $button_tray->addElement($cancel_button);
         $form->addElement($button_tray);
