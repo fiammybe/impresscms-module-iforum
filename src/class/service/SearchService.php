@@ -5,7 +5,7 @@ defined('ICMS_ROOT_PATH') or exit();
 
 class IforumSearchService
 {
-    public function search($queryarray, $andor, $limit, $offset, $userid, $forums = 0, $sortby = 0, string $searchin = 'both', string $subquery = ''): array
+    public function search($queryarray, $andor, $limit, $offset, $userid, $forums = 0, $sortby = 0, string $searchin = 'both', array $filters = array()): array
     {
         global $icmsConfig;
         static $allowedForums = array(), $iforumConfig;
@@ -103,7 +103,11 @@ class IforumSearchService
             $sql .= ') ';
         }
 
-        $sql .= $this->normalizeSubquery($subquery) . ' ORDER BY ' . $this->normalizeSortby($sortby);
+        if (isset($filters['min_post_time'])) {
+            $sql .= ' AND p.post_time >= ' . (int)$filters['min_post_time'];
+        }
+
+        $sql .= ' ORDER BY ' . $this->normalizeSortby($sortby);
 
         $result = icms::$xoopsDB->query($sql, $limit, $offset);
         $ret = array();
@@ -201,23 +205,6 @@ class IforumSearchService
 
         return 'p.post_time DESC';
     }
-
-    private function normalizeSubquery(string $subquery): string
-    {
-        $subquery = trim($subquery);
-        if ($subquery === '') {
-            return '';
-        }
-
-        if (!preg_match('/[;\x00]/', $subquery)
-            && !preg_match('/--|\/\*|\*\//', $subquery)
-            && preg_match('/^[\s\w\.\(\),\'"%<>=!+-]+$/', $subquery)) {
-            return ' ' . $subquery;
-        }
-
-        return '';
-    }
-
     private function normalizeAndor($andor): string
     {
         return (is_string($andor) && strtoupper($andor) === 'OR') ? 'OR' : 'AND';

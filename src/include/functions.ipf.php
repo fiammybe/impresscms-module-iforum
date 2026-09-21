@@ -62,13 +62,18 @@ function iforum_get_ipf_handler(string $name, $db = null)
         $db = icms::$xoopsDB;
     }
 
-    if (!isset($instances[$name])) {
-        iforum_load_ipf_class('ipf', $map[$name]['file']);
-        $className = $map[$name]['class'];
-        $instances[$name] = new $className($db);
+    $cacheKey = $name;
+    if ($db !== icms::$xoopsDB && is_object($db)) {
+        $cacheKey .= ':' . spl_object_hash($db);
     }
 
-    return $instances[$name];
+    if (!isset($instances[$cacheKey])) {
+        iforum_load_ipf_class('ipf', $map[$name]['file']);
+        $className = $map[$name]['class'];
+        $instances[$cacheKey] = new $className($db);
+    }
+
+    return $instances[$cacheKey];
 }
 
 function iforum_get_service(string $name)
