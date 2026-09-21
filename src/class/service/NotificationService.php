@@ -22,6 +22,9 @@ class IforumNotificationService
                 return array('name' => '', 'url' => '');
             }
             $result_array = icms::$xoopsDB->fetchArray($result);
+            if (!$result_array) {
+                return array('name' => '', 'url' => '');
+            }
             return array(
                 'name' => $result_array['forum_name'],
                 'url' => ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewforum.php?forum=' . $item_id,
@@ -35,6 +38,9 @@ class IforumNotificationService
                 return array('name' => '', 'url' => '');
             }
             $result_array = icms::$xoopsDB->fetchArray($result);
+            if (!$result_array) {
+                return array('name' => '', 'url' => '');
+            }
             return array(
                 'name' => $result_array['topic_title'],
                 'url' => ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewtopic.php?forum=' . $result_array['forum_id'] . '&topic_id=' . $item_id,
@@ -48,6 +54,9 @@ class IforumNotificationService
                 return array('name' => '', 'url' => '');
             }
             $result_array = icms::$xoopsDB->fetchArray($result);
+            if (!$result_array) {
+                return array('name' => '', 'url' => '');
+            }
             return array(
                 'name' => $result_array['subject'],
                 'url' => ICMS_URL . '/modules/' . $module->getVar('dirname') . '/viewtopic.php?forum=' . $result_array['forum_id'] . '&amp;topic_id=' . $result_array['topic_id'] . '#forumpost' . $item_id,

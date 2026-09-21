@@ -188,7 +188,7 @@ class IforumSearchService
             return '';
         }
 
-        if (preg_match('/^(?:(?:AND|OR)\s+(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*)+$/i', $subquery)) {
+        if (preg_match('/^(?:(?:AND|OR)\s+(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|NULL)|IS\s+NOT\s+NULL|IS\s+NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*)+$/i', $subquery)) {
             return ' ' . $subquery;
         }
 

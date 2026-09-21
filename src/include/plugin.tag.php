@@ -49,7 +49,7 @@ function iforum_tag_synchronization($mid)
 	$service = iforum_get_service('topicTag');
 	return $service->synchronize((int)$mid);
 }
-// These will try to create functions for tag plugin, if the filder has been reneamed to something else
+// These will try to create functions for tag plugin if the folder has been renamed to something else
 if (!function_exists($MyDirName.'_tag_iteminfo'))
 	{
 	$myfunc = 'function '.$MyDirName.'_tag_iteminfo (&$items) { return iforum_tag_iteminfo($items);}';
