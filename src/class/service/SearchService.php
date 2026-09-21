@@ -55,6 +55,7 @@ class IforumSearchService
             . ' LEFT JOIN ' . icms::$xoopsDB->prefix('bb_posts_text') . ' pt ON p.post_id = pt.post_id'
             . ' LEFT JOIN ' . icms::$xoopsDB->prefix('bb_forums') . ' f ON p.forum_id = f.forum_id'
             . ' LEFT JOIN ' . icms::$xoopsDB->prefix('bb_topics') . ' t ON p.topic_id = t.topic_id'
+            . ' LEFT JOIN ' . icms::$xoopsDB->prefix('users') . ' u ON p.uid = u.uid'
             . ' WHERE 1 = 1'
             . ' AND p.approved = 1'
             . ' AND p.forum_id = f.forum_id';
@@ -171,11 +172,7 @@ class IforumSearchService
             return 'p.post_time DESC';
         }
 
-        if (strcasecmp($sortby, 'u.uname') === 0) {
-            return 'p.poster_name';
-        }
-
-        if (preg_match('/^(?:p|pt|f|t)\.[a-z_]+(?:\s+(?:ASC|DESC))?$/i', $sortby)) {
+        if (preg_match('/^(?:p|pt|f|t|u)\.[a-z_]+(?:\s+(?:ASC|DESC))?$/i', $sortby)) {
             return $sortby;
         }
 
@@ -189,7 +186,7 @@ class IforumSearchService
             return '';
         }
 
-        if (preg_match('/^(?:(?:AND|OR)\s+\(*\s*(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|NULL)|IS\s+NOT\s+NULL|IS\s+NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*\)*\s*)+$/i', $subquery)) {
+        if (preg_match('/^(?:(?:AND|OR)\s+\(*\s*(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|"[^"]*"|NULL)|IS\s+NOT\s+NULL|IS\s+NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*\)*\s*)+$/i', $subquery)) {
             return ' ' . $subquery;
         }
 

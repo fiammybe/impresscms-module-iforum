@@ -26,7 +26,7 @@ class IforumReportForm
             'order' => $order,
             'viewmode' => $viewmode,
         ));
-        $cancel_button->setExtra("onclick='location.href=" . json_encode($extra) . ";'");
+        $cancel_button->setExtra("onclick='location.href=" . htmlspecialchars(json_encode($extra), ENT_QUOTES) . ";'");
         $button_tray->addElement($submit_button);
         $button_tray->addElement($cancel_button);
         $form->addElement($button_tray);
