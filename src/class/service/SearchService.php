@@ -176,31 +176,32 @@ class IforumSearchService
             return 'p.post_time DESC';
         }
 
-        $normalized = strtolower($sortby);
-        $allowedSorts = array(
-            'p.post_time desc' => 'p.post_time DESC',
-            'post_time desc' => 'p.post_time DESC',
-            'p.post_time' => 'p.post_time',
-            'post_time' => 'p.post_time',
-            'p.subject' => 'p.subject',
-            'subject' => 'p.subject',
-            'p.poster_name' => 'p.poster_name',
-            'poster_name' => 'p.poster_name',
-            'pt.post_text' => 'pt.post_text',
-            'post_text' => 'pt.post_text',
-            'f.forum_name' => 'f.forum_name',
-            'forum_name' => 'f.forum_name',
-            't.topic_title' => 't.topic_title',
-            'topic_title' => 't.topic_title',
-            't.topic_views' => 't.topic_views',
-            'topic_views' => 't.topic_views',
-            't.topic_replies' => 't.topic_replies',
-            'topic_replies' => 't.topic_replies',
-            'u.uname' => 'u.uname',
-            'uname' => 'u.uname',
-        );
-        if (isset($allowedSorts[$normalized])) {
-            return $allowedSorts[$normalized];
+        if (preg_match('/^(.*?)(?:\s+(ASC|DESC))?$/i', $sortby, $matches)) {
+            $normalized = strtolower(trim($matches[1]));
+            $direction = empty($matches[2]) ? '' : ' ' . strtoupper($matches[2]);
+            $allowedSorts = array(
+                'p.post_time' => 'p.post_time',
+                'post_time' => 'p.post_time',
+                'p.subject' => 'p.subject',
+                'subject' => 'p.subject',
+                'p.poster_name' => 'p.poster_name',
+                'poster_name' => 'p.poster_name',
+                'pt.post_text' => 'pt.post_text',
+                'post_text' => 'pt.post_text',
+                'f.forum_name' => 'f.forum_name',
+                'forum_name' => 'f.forum_name',
+                't.topic_title' => 't.topic_title',
+                'topic_title' => 't.topic_title',
+                't.topic_views' => 't.topic_views',
+                'topic_views' => 't.topic_views',
+                't.topic_replies' => 't.topic_replies',
+                'topic_replies' => 't.topic_replies',
+                'u.uname' => 'u.uname',
+                'uname' => 'u.uname',
+            );
+            if (isset($allowedSorts[$normalized])) {
+                return $allowedSorts[$normalized] . $direction;
+            }
         }
 
         return 'p.post_time DESC';

@@ -36,6 +36,11 @@ function &iforum_search($queryarray, $andor, $limit, $offset, $userid, $forums =
 	if (is_string($subquery) && preg_match('/^\s*AND\s+p\.post_time\s+>=\s+(\d+)\s*$/i', $subquery, $matches)) {
 		$filters['min_post_time'] = (int)$matches[1];
 	}
+	if (is_string($subquery) && trim($subquery) !== '' && empty($filters)) {
+		trigger_error('Unsupported iForum search subquery: ' . $subquery, E_USER_WARNING);
+		$results = array();
+		return $results;
+	}
 	$searchService = iforum_get_service('search');
 	$results = $searchService->search($queryarray, $andor, $limit, $offset, $userid, $forums, $sortby, $searchin, $filters);
 	return $results;
