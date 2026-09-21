@@ -32,6 +32,7 @@ if (defined("IFORUM_FUNCTIONS_INI")) return;
  define("IFORUM_FUNCTIONS_INI", 1);
  
 include_once(ICMS_ROOT_PATH."/modules/".basename(dirname(__FILE__, 2))."/class/art/functions.php");
+include_once(ICMS_ROOT_PATH."/modules/".basename(dirname(__FILE__, 2))."/include/functions.ipf.php");
  
 function iforum_load_object()
 {

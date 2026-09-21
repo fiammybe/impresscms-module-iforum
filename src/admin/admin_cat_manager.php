@@ -24,6 +24,7 @@
 */
 
 include('admin_header.php');
+include_once ICMS_ROOT_PATH.'/modules/'.basename(dirname(__DIR__)).'/class/form/CategoryForm.php';
 icms_cp_header();
 
 $op = !empty($_GET['op'])? $_GET['op'] :
@@ -59,54 +60,7 @@ function editCategory($cat_id = 0)
 	{
 		$fc = $category_handler->create();
 	}
-	$groups_cat_access = null;
-
-	if ($cat_id)
-	{
-		$sform = new icms_form_Theme(_AM_IFORUM_EDITCATEGORY . " " . $fc->getVar('cat_title'), "op", xoops_getenv('PHP_SELF'));
-	}
-	else
-	{
-		$sform = new icms_form_Theme(_AM_IFORUM_CREATENEWCATEGORY, "op", xoops_getenv('PHP_SELF'));
-		$fc->setVar('cat_title', '');
-		$fc->setVar('cat_image', 'blank.gif');
-		$fc->setVar('cat_description', '');
-		$fc->setVar('cat_order', 0);
-		$fc->setVar('cat_url', 'http://www.impresscms.org ImpressCMS');
-	}
-
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_SETCATEGORYORDER, 'cat_order', 5, 10, $fc->getVar('cat_order')), false);
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_CATEGORY, 'title', 50, 80, $fc->getVar('cat_title', 'E')), true);
-	$sform->addElement(new icms_form_elements_Dhtmltextarea(_AM_IFORUM_CATEGORYDESC, 'catdescript', $fc->getVar('cat_description', 'E'), 10, 60), false);
-
-	$imgdir = "/modules/" . icms::$module->getVar("dirname") . "/images/category";
-	if (!$fc->getVar("cat_image")) $fc->setVar('cat_image', 'blank.gif');
-		$graph_array = icms_core_Filesystem::getFileList(ICMS_ROOT_PATH . $imgdir."/", "", array('gif', 'jpg', 'png'));
-	array_unshift($graph_array, _NONE);
-	$indeximage_select = new icms_form_elements_Select('', 'indeximage', $fc->getVar('cat_image'));
-	$indeximage_select->addOptionArray($graph_array);
-	$indeximage_select->setExtra("onchange=\"showImgSelected('img', 'indeximage', '/".$imgdir."/', '', '" . ICMS_URL . "')\"");
-	$indeximage_tray = new icms_form_elements_Tray(_AM_IFORUM_IMAGE, '&nbsp;');
-	$indeximage_tray->addElement($indeximage_select);
-	$indeximage_tray->addElement(new icms_form_elements_Label('', "<br /><img src='" . ICMS_URL . $imgdir . "/" . $fc->getVar('cat_image') . " 'name='img' id='img' alt='' />"));
-	$sform->addElement($indeximage_tray);
-
-	$sform->addElement(new icms_form_elements_Text(_AM_IFORUM_SPONSORLINK, 'sponurl', 50, 80, $fc->getVar('cat_url', 'E')), false);
-	$sform->addElement(new icms_form_elements_Hidden('cat_id', $cat_id));
-
-	$button_tray = new icms_form_elements_Tray('', '');
-	$button_tray->addElement(new icms_form_elements_Hidden('op', 'save'));
-
-	$butt_save = new icms_form_elements_Button('', '', _SUBMIT, 'submit');
-	$butt_save->setExtra('onclick="this.form.elements.op.value=\'save\'"');
-	$button_tray->addElement($butt_save);
-	if ($cat_id)
-	{
-		$butt_delete = new icms_form_elements_Button('', '', _CANCEL, 'submit');
-		$butt_delete->setExtra('onclick="this.form.elements.op.value=\'default\'"');
-		$button_tray->addElement($butt_delete);
-	}
-	$sform->addElement($button_tray);
+	$sform = IforumCategoryForm::create($fc, (int)$cat_id);
 	$sform->display();
 }
 
