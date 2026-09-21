@@ -22,7 +22,7 @@ class IforumTopicTagService
             return false;
         }
 
-        $item_handler = iforum_get_ipf_handler('topic');
+        $item_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 3)), 'iforum');
         $items_obj = $item_handler->getObjects(new icms_db_criteria_Item('topic_id', '(' . implode(', ', $items_id) . ')', 'IN'), true);
 
         foreach (array_keys($items) as $cat_id) {

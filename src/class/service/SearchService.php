@@ -7,6 +7,7 @@ class IforumSearchService
 {
     private const ALLOWED_SORTS = array(
         'p.post_time desc',
+        'p.subject',
         't.topic_title',
         't.topic_views',
         't.topic_replies',
@@ -59,10 +60,12 @@ class IforumSearchService
         $forum = implode(',', array_keys($allowedForums[$uid][$forumScope]));
         $sql = 'SELECT p.uid,f.forum_id, p.topic_id, p.poster_name, p.post_time,'
             . ' f.forum_name, p.post_id, p.subject'
-            . ' FROM ' . icms::$xoopsDB->prefix('bb_posts') . ' p,'
-            . ' ' . icms::$xoopsDB->prefix('bb_posts_text') . ' pt,'
-            . ' ' . icms::$xoopsDB->prefix('bb_forums') . ' f'
-            . ' WHERE p.post_id = pt.post_id'
+            . ' FROM ' . icms::$xoopsDB->prefix('bb_posts') . ' p'
+            . ' LEFT JOIN ' . icms::$xoopsDB->prefix('bb_posts_text') . ' pt ON p.post_id = pt.post_id'
+            . ' LEFT JOIN ' . icms::$xoopsDB->prefix('bb_forums') . ' f ON p.forum_id = f.forum_id'
+            . ' LEFT JOIN ' . icms::$xoopsDB->prefix('bb_topics') . ' t ON p.topic_id = t.topic_id'
+            . ' LEFT JOIN ' . icms::$xoopsDB->prefix('users') . ' u ON p.uid = u.uid'
+            . ' WHERE 1 = 1'
             . ' AND p.approved = 1'
             . ' AND p.forum_id = f.forum_id';
 
@@ -92,7 +95,7 @@ class IforumSearchService
                     break;
             }
             for ($i = 1; $i < $count; $i++) {
-                $sql .= ' ' . $andor . ' ';
+                $sql .= ' ' . $this->normalizeAndor($andor) . ' ';
                 switch ($searchin) {
                     case 'title':
                         $sql .= '(' . $this->buildLikeClause('p.subject', $queryarray[$i]) . ')';
@@ -185,10 +188,15 @@ class IforumSearchService
             return '';
         }
 
-        if (preg_match('/^AND\s+p\.post_time\s+>=\s+\d+$/i', $subquery)) {
+        if (preg_match('/^(?:(?:AND|OR)\s+(?:(?:p|pt|f|t|u)\.[a-z_]+\s*(?:=|<>|!=|>=|<=|>|<|LIKE)\s*(?:\d+|\'[^\']*\'|NULL)|(?:p|pt|f|t|u)\.[a-z_]+\s+IN\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\))\s*)+$/i', $subquery)) {
             return ' ' . $subquery;
         }
 
         return '';
+    }
+
+    private function normalizeAndor($andor): string
+    {
+        return (is_string($andor) && strtoupper($andor) === 'OR') ? 'OR' : 'AND';
     }
 }
