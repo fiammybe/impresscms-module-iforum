@@ -32,16 +32,13 @@ require_once(ICMS_ROOT_PATH.'/modules/'.basename(dirname(__FILE__, 2)).'/include
 
 function &iforum_search($queryarray, $andor, $limit, $offset, $userid, $forums = 0, $sortby = 0, $searchin = "both", $subquery = "")
 {
-	$filters = array();
-	if (is_string($subquery) && preg_match('/^\s*AND\s+p\.post_time\s+>=\s+(\d+)\s*$/i', $subquery, $matches)) {
-		$filters['min_post_time'] = (int)$matches[1];
-	}
+	$searchService = iforum_get_service('search');
+	$filters = is_string($subquery) ? $searchService->buildLegacyFilters($subquery) : array();
 	if (is_string($subquery) && trim($subquery) !== '' && empty($filters)) {
 		trigger_error('Unsupported iForum search subquery: ' . $subquery, E_USER_WARNING);
 		$results = array();
 		return $results;
 	}
-	$searchService = iforum_get_service('search');
 	$results = $searchService->search($queryarray, $andor, $limit, $offset, $userid, $forums, $sortby, $searchin, $filters);
 	return $results;
 }

@@ -5,6 +5,16 @@ defined('ICMS_ROOT_PATH') or exit();
 
 class IforumSearchService
 {
+    public function buildLegacyFilters(string $subquery): array
+    {
+        $filters = array();
+        if (preg_match('/^\s*AND\s+p\.post_time\s+>=\s+(\d+)\s*$/i', $subquery, $matches)) {
+            $filters['min_post_time'] = (int)$matches[1];
+        }
+
+        return $filters;
+    }
+
     public function search($queryarray, $andor, $limit, $offset, $userid, $forums = 0, $sortby = 0, string $searchin = 'both', array $filters = array()): array
     {
         global $icmsConfig;
@@ -24,7 +34,7 @@ class IforumSearchService
 
         if (!isset($allowedForums[$uid][$forumScope])) {
             $allowedForums[$uid][$forumScope] = array();
-            $forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
+            $forum_handler = icms_getmodulehandler('forum', basename(dirname(__FILE__, 4)), 'iforum');
             if (is_array($forums) && count($forums) > 0) {
                 foreach ($forums as $forumid) {
                     $_forum = $forum_handler->get($forumid);
@@ -139,7 +149,7 @@ class IforumSearchService
         }
 
         $module_handler = icms::handler('icms_module');
-        $iforum = $module_handler->getByDirname(basename(dirname(__FILE__, 3)));
+        $iforum = $module_handler->getByDirname(basename(dirname(__FILE__, 4)));
         if (!isset($iforumConfig)) {
             $iforumConfig = icms::$config->getConfigsByCat(0, $iforum->getVar('mid'));
         }

@@ -24,6 +24,7 @@
 */
  
 include 'header.php';
+include_once ICMS_ROOT_PATH . '/modules/' . basename(__DIR__) . '/include/functions.ipf.php';
 // Disable cache
 $icmsConfig["module_cache"][icms::$module->getVar("mid")] = 0;
 include ICMS_ROOT_PATH."/header.php";
@@ -105,7 +106,9 @@ else
 	$require_reply = $forumpost->getVar('require_reply');
 	$hidden = "";
 	 
-	include 'include/forumform.inc.php';
+	$stateService = iforum_get_service('postFormState');
+	$context = $stateService->buildEditContext($forumpost, $attachments, (int)$forum_obj->getVar('forum_id'), (int)$topic_id, (int)$post_id, (int)$post_id2, (int)$order, (string)$viewmode);
+	iforum_render_post_form($context);
 	if (!$istopic)
 	{
 		$forumpost2 = $post_handler->get($post_id2);

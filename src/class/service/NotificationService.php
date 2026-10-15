@@ -8,7 +8,7 @@ class IforumNotificationService
     public function getItemInfo(string $category, $item_id): array
     {
         $module_handler = icms::handler('icms_module');
-        $module = $module_handler->getByDirname(basename(dirname(__FILE__, 3)));
+        $module = $module_handler->getByDirname(basename(dirname(__FILE__, 4)));
 
         if ($category === 'global') {
             return array('name' => '', 'url' => '');

@@ -13,7 +13,7 @@ class IforumForumForm
         $currentParentForum = (int)($forum ? $forum->getVar('parent_forum') : 0);
 
         if ($isNew) {
-            $forumHandler = $forumHandler ?: icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
+            $forumHandler = $forumHandler ?: icms_getmodulehandler('forum', basename(dirname(__FILE__, 4)), 'iforum');
             $forum = $forumHandler->create();
             $currentParentForum = $parentForum;
             $forum->setVar('parent_forum', $currentParentForum);
@@ -51,7 +51,7 @@ class IforumForumForm
             $mytree->makeMySelBox('cat_title', 'cat_id', $selectedCategory);
             $form->addElement(new icms_form_elements_Label(_AM_IFORUM_CATEGORY, ob_get_clean()));
         } else {
-            $forumHandler = $forumHandler ?: icms_getmodulehandler('forum', basename(dirname(__FILE__, 3)), 'iforum');
+            $forumHandler = $forumHandler ?: icms_getmodulehandler('forum', basename(dirname(__FILE__, 4)), 'iforum');
             $pf = $forumHandler->get($currentParentForum);
             $form->addElement(new icms_form_elements_Hidden('cat_id', $pf->getVar('cat_id')));
         }

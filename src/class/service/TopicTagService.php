@@ -22,7 +22,7 @@ class IforumTopicTagService
             return false;
         }
 
-        $item_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 3)), 'iforum');
+        $item_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 4)), 'iforum');
         $items_obj = $item_handler->getObjects(new icms_db_criteria_Item('topic_id', '(' . implode(', ', $items_id) . ')', 'IN'), true);
 
         foreach (array_keys($items) as $cat_id) {
@@ -47,7 +47,7 @@ class IforumTopicTagService
 
     public function synchronize(int $mid): bool
     {
-        $item_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 3)), 'iforum');
+        $item_handler = icms_getmodulehandler('topic', basename(dirname(__FILE__, 4)), 'iforum');
         $link_handler = xoops_getmodulehandler('link', 'tag');
 
         if ($link_handler->mysql_major_version() >= 4) {

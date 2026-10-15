@@ -85,6 +85,9 @@ function iforum_get_service(string $name)
         'search' => array('file' => 'SearchService', 'class' => 'IforumSearchService'),
         'notification' => array('file' => 'NotificationService', 'class' => 'IforumNotificationService'),
         'topicTag' => array('file' => 'TopicTagService', 'class' => 'IforumTopicTagService'),
+        'post' => array('file' => 'PostService', 'class' => 'IforumPostService'),
+        'postFormState' => array('file' => 'PostFormStateService', 'class' => 'IforumPostFormStateService'),
+        'adminPermission' => array('file' => 'AdminPermissionService', 'class' => 'IforumAdminPermissionService'),
     );
 
     if (!isset($map[$name])) {
@@ -98,4 +101,22 @@ function iforum_get_service(string $name)
     }
 
     return $instances[$name];
+}
+
+function iforum_render_post_form(array $context): void
+{
+    include_once iforum_ipf_module_root() . '/class/form/PostFormBuilder.php';
+    include_once iforum_ipf_module_root() . '/class/form/TopicPostForm.php';
+    include_once iforum_ipf_module_root() . '/class/form/ReplyPostForm.php';
+    include_once iforum_ipf_module_root() . '/class/form/EditPostForm.php';
+
+    if (!empty($context['isedit'])) {
+        $form = IforumEditPostForm::create($context);
+    } elseif (!empty($context['isreply'])) {
+        $form = IforumReplyPostForm::create($context);
+    } else {
+        $form = IforumTopicPostForm::create($context);
+    }
+
+    $form->display();
 }
