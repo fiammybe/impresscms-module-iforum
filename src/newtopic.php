@@ -24,6 +24,7 @@
 */
  
 include 'header.php';
+include_once ICMS_ROOT_PATH . '/modules/' . basename(__DIR__) . '/include/functions.ipf.php';
 foreach (array('forum', 'order') as $getint)
 {
 	$ {
@@ -87,6 +88,8 @@ if (icms::$module->config['disc_show'] == 1 or icms::$module->config['disc_show'
 	{
 	echo "<div class=\"confirmMsg\">".icms::$module->config['disclaimer']."</div><br clear=\"both\">";
 }
- 
-include 'include/forumform.inc.php';
+
+$stateService = iforum_get_service('postFormState');
+$context = $stateService->buildNewTopicContext((int)$forum, (int)$order, (string)$viewmode, isset($op) ? (string)$op : '');
+iforum_render_post_form($context);
 include ICMS_ROOT_PATH.'/footer.php';

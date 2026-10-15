@@ -24,6 +24,7 @@
 */
  
 include 'header.php';
+include_once ICMS_ROOT_PATH.'/modules/'.basename(__DIR__).'/class/form/ReportForm.php';
  
 if (isset($_POST['submit']) )
 {
@@ -106,25 +107,7 @@ else
 	$icmsConfig["module_cache"][icms::$module->getVar("mid")] = 0;
 	include ICMS_ROOT_PATH.'/header.php';
  
-	$report_form = new icms_form_Theme('', 'reportform', 'report.php');
-	 
-	$report_form->addElement(new icms_form_elements_Text(_MD_REPORT_TEXT, 'report_text', 80, 255), true);
-	 
-	$report_form->addElement(new icms_form_elements_Hidden('pid', $pid));
-	$report_form->addElement(new icms_form_elements_Hidden('post_id', $post_id));
-	$report_form->addElement(new icms_form_elements_Hidden('topic_id', $topic_id));
-	$report_form->addElement(new icms_form_elements_Hidden('forum', $forum));
-	$report_form->addElement(new icms_form_elements_Hidden('viewmode', $viewmode));
-	$report_form->addElement(new icms_form_elements_Hidden('order', $order));
-	 
-	$button_tray = new icms_form_elements_Tray('');
-	$submit_button = new icms_form_elements_Button('', 'submit', _SUBMIT, "submit");
-	$cancel_button = new icms_form_elements_Button('', 'cancel', _MD_CANCELPOST, 'button');
-	$extra = "viewtopic.php?forum=$forum&amp;topic_id=$topic_id&amp;post_id=$post_id&amp;order=$order&amp;viewmode=$viewmode";
-	$cancel_button->setExtra("onclick='location=\"".$extra."\"'");
-	$button_tray->addElement($submit_button);
-	$button_tray->addElement($cancel_button);
-	$report_form->addElement($button_tray);
+	$report_form = IforumReportForm::create((int)$pid, (int)$post_id, (int)$topic_id, (int)$forum, (string)$viewmode, (string)$order);
 	 
 	$report_form->display();
 	 

@@ -24,6 +24,7 @@
 */
  
 include 'header.php';
+include_once ICMS_ROOT_PATH . '/modules/' . basename(__DIR__) . '/include/functions.ipf.php';
 foreach (array('forum', 'topic_id', 'post_id', 'order', 'pid', 'start') as $getint)
 {
 	$ {
@@ -162,8 +163,10 @@ if (icms::$module->config['disc_show'] == 2 or icms::$module->config['disc_show'
 	{
 	echo "<div class=\"confirmMsg\">".icms::$module->config['disclaimer']."</div><br clear=\"both\">";
 }
- 
-include 'include/forumform.inc.php';
+
+$stateService = iforum_get_service('postFormState');
+$context = $stateService->buildReplyContext($forumpost, (int)$forum, (int)$topic_id, (int)$pid, (int)$order, (int)$start, (string)$viewmode, (string)$subject, (string)$message, (string)$hidden);
+iforum_render_post_form($context);
  
 $karma_handler = icms_getmodulehandler('karma', basename(__DIR__), 'iforum' );
 $user_karma = $karma_handler->getUserKarma();
